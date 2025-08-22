@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Imovel } from '../../interfaces/Imovel';
 
-const API_URL = 'http://localhost:5000/imobs';
+const API_URL = 'https://imob-back-yc5k.onrender.com/imobs';
+// const API_URL = 'http://localhost:5000/imobs';
 
 export const fetchImoveis = async (): Promise<Imovel[]> => {
     try {
