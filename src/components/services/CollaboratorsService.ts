@@ -8,6 +8,7 @@ export const fetchCollaborators = async (): Promise<Collaborator[]> => {
     try {
         const response = await axios.get<Collaborator[]>(API_URL);
         return response.data;
+
     } catch (error) {
         console.error('Erro ao buscar colaboradores:', error);
         throw new Error('Falha ao conectar com o servidor.');
@@ -15,6 +16,7 @@ export const fetchCollaborators = async (): Promise<Collaborator[]> => {
 };
 
 export const createCollaborators = async (collaborators: Omit<Collaborator, '_id'>): Promise<Collaborator> => {
+
     try {
         const response = await axios.post<Collaborator>(API_URL, collaborators);
         return response.data;
