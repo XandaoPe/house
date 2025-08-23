@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { Collaborator } from '../../interfaces/collaborators';
 
-const API_URL = 'https://imob-back-yc5k.onrender.com/collaborators';
-// const API_URL = 'http://localhost:5000/collaborators';
+// const API_URL = 'https://imob-back-yc5k.onrender.com/collaborators';
+const API_URL = 'http://localhost:5000/collaborators';
 
 export const fetchCollaborators = async (): Promise<Collaborator[]> => {
     try {

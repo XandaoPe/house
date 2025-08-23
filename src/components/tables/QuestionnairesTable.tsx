@@ -13,45 +13,42 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Collaborator } from '../../interfaces/collaborators';
+import { Questionnaire } from '../../interfaces/questionnaire';
+import ReplyIcon from '@mui/icons-material/Reply';
 
-interface collaboratorsTableProps {
-    collaborators: Collaborator[];
-    onEdit: (collaborator: Collaborator) => void;
-    onDelete: (collaborator: Collaborator) => void;
+interface questionnairesTableProps {
+    questionnaires: Questionnaire[];
+    onEdit: (questionnaire: Questionnaire) => void;
+    onDelete: (questionnaire: Questionnaire) => void;
 }
 
-export const CollaboratorsTable: React.FC<collaboratorsTableProps> = ({ collaborators, onDelete, onEdit }) => {
-    if (collaborators.length === 0) {
+export const QuestionnairesTable: React.FC<questionnairesTableProps> = ({ questionnaires,  onDelete, onEdit}) => {
+    if (questionnaires.length === 0) {
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-                Nenhum colaborador encontrado.
+                Nenhum questionario encontrado.
             </Typography>
         );
     }
 
     return (
         <TableContainer component={Paper}>
-            <Table aria-label="tabela de imóveis" size="small">
+            <Table aria-label="tabela de Questões" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{py:0.2}}>Nome</TableCell>
-                        <TableCell sx={{py:0.2}}>Email</TableCell>
-                        <TableCell sx={{py:0.2}}>Fone</TableCell>
-                        <TableCell align="right" sx={{py:0.2}}>Ações</TableCell>
+                        <TableCell sx={{ py: 0.2 }}>Pergunta</TableCell>
+                        <TableCell align="right" sx={{ py: 0.2 }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {collaborators.map((collaborator) => (
-                        <TableRow key={collaborator._id}>
-                            <TableCell sx={{py:0.2}}>{collaborator.name}</TableCell>
-                            <TableCell sx={{py:0.2}}>{collaborator.email}</TableCell>
-                            <TableCell sx={{py:0.2}}>{collaborator.phone}</TableCell>
-                            <TableCell align="right" sx={{py:0.2}}>
-                                <ButtonGroup variant="contained" aria-label="Ações de Imóvel">
+                    {questionnaires.map((questionnaire) => (
+                        <TableRow key={questionnaire._id}>
+                            <TableCell sx={{ py: 0.2 }}>{questionnaire.question}</TableCell>
+                            <TableCell align="right" sx={{ py: 0.2 }}>
+                                <ButtonGroup variant="contained" aria-label="Ações de Questões">
                                     <Button
                                         color="primary"
-                                        onClick={() => onEdit(collaborator)}
+                                        onClick={() => onEdit(questionnaire)}
                                         startIcon={<EditIcon />}
                                         sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
                                     >
@@ -59,7 +56,7 @@ export const CollaboratorsTable: React.FC<collaboratorsTableProps> = ({ collabor
                                     </Button>
                                     <Button
                                         color="error"
-                                        onClick={() => onDelete(collaborator)}
+                                        onClick={() => onDelete(questionnaire)}
                                         startIcon={<DeleteIcon />}
                                         sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
                                     >

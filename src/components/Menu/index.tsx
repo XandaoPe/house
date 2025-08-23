@@ -14,6 +14,7 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 import QuizIcon from '@mui/icons-material/Quiz';
 import { ImoveisModal } from '../Modal/ImobModal';
 import { CollaboratorsModal } from '../Modal/CollaboratorModal';
+import { QuestionnairesModal } from '../Modal/QuestionnaireModal';
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -67,11 +68,14 @@ export default function Menu() {
     const [expanded, setExpanded] = React.useState<string | false>('panel1');
     const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
     const [isModalOpenCollaborators, setIsModalOpenCollaborators] = React.useState<boolean>(false);
+    const [isModalOpenQuestionnaires, setIsModalOpenQuestionnaires] = React.useState<boolean>(false);
 
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
     const handleOpenModalCollaborators = () => setIsModalOpenCollaborators(true);
     const handleCloseModalCollaborators = () => setIsModalOpenCollaborators(false);
+    const handleOpenModalQuestionnaires = () => setIsModalOpenQuestionnaires(true);
+    const handleCloseModalQuestionnaires = () => setIsModalOpenQuestionnaires(false);
 
     const handleChange =
         (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -79,9 +83,8 @@ export default function Menu() {
         };
 
 
-    return (
+    return (        
         <Box>
-
             <Accordion
                 expanded={expanded === 'panel1'}
                 onChange={handleChange('panel1')}
@@ -93,10 +96,10 @@ export default function Menu() {
                 </AccordionSummary>
             </Accordion>
 
-            <Accordion 
-            expanded={expanded === 'panel2'} 
-            onChange={handleChange('panel2')}
-            onClick={handleOpenModalCollaborators}
+            <Accordion
+                expanded={expanded === 'panel2'}
+                onChange={handleChange('panel2')}
+                onClick={handleOpenModalCollaborators}
             >
                 <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
                     <EngineeringIcon sx={{ mr: 1 }} />
@@ -104,7 +107,11 @@ export default function Menu() {
                 </AccordionSummary>
             </Accordion>
 
-            <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+            <Accordion
+                expanded={expanded === 'panel3'}
+                onChange={handleChange('panel3')}
+                onClick={handleOpenModalQuestionnaires}
+            >
                 <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                     <QuizIcon sx={{ mr: 1 }} />
                     <Typography component="span">Questionário</Typography>
@@ -118,6 +125,10 @@ export default function Menu() {
             <CollaboratorsModal
                 open={isModalOpenCollaborators}
                 onClose={handleCloseModalCollaborators}
+                />
+            <QuestionnairesModal 
+                open={isModalOpenQuestionnaires}
+                onClose={handleCloseModalQuestionnaires}
             />
 
         </Box>

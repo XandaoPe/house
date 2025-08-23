@@ -8,13 +8,14 @@ import {
     Alert,
     CircularProgress,
 } from '@mui/material';
-import { createCollaborators } from '../services/CollaboratorsService';
-import { Collaborator } from '../../interfaces/collaborators';
+import { updateQuestionnaires } from '../services/QuestionnairesService';
+import { Questionnaire } from '../../interfaces/questionnaire';
 
-interface CreateCollaboratorModalProps {
+interface EditQuestionnaireModalProps {
     open: boolean;
+    questionnaire: Questionnaire | null;
     onClose: () => void;
-    onSuccess: (collaborator: Collaborator) => void;
+    onSuccess: (questionnaire: Questionnaire) => void;
 }
 
 const modalStyle = {
@@ -31,25 +32,20 @@ const modalStyle = {
     gap: 1,
 };
 
-export const CreateCollaboratorModal: React.FC<CreateCollaboratorModalProps> = ({ open, onClose, onSuccess }) => {
+export const EditQuestionnaireModal: React.FC<EditQuestionnaireModalProps> = ({ open, questionnaire, onClose, onSuccess }) => {
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
-    const [formData, setFormData] = React.useState({
-        name: '',
-        email: '',
-        phone: '',
-    });
+    const [formData, setFormData] = React.useState<Questionnaire | null>(null);
 
     React.useEffect(() => {
-        if (open) {
-            setFormData({
-                name: '',
-                email: '',
-                phone: '',
-            });
-            setError(null); // Também é uma boa prática limpar o estado de erro
+        if (questionnaire) {
+            setFormData(questionnaire);
         }
-    }, [open]);
+    }, [questionnaire]);
+
+    if (!formData) {
+        return null;
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -63,11 +59,11 @@ export const CreateCollaboratorModal: React.FC<CreateCollaboratorModalProps> = (
         setLoading(true);
         setError(null);
         try {
-            const newCollaborator = await createCollaborators(formData);
-            onSuccess(newCollaborator); // Chama a função de sucesso do componente pai
+            await updateQuestionnaires(formData);
+            onSuccess(formData); // Chama o callback de sucesso com os dados atualizados
             onClose(); // Fecha a modal
         } catch (err) {
-            setError('Falha ao criar o colaborador. Verifique os dados e tente novamente.');
+            setError('Falha ao atualizar o questionário. Verifique os dados e tente novamente.');
         } finally {
             setLoading(false);
         }
@@ -77,29 +73,13 @@ export const CreateCollaboratorModal: React.FC<CreateCollaboratorModalProps> = (
         <Modal open={open} onClose={onClose}>
             <Box sx={modalStyle} component="form" onSubmit={handleSubmit}>
                 <Typography variant="h6" component="h2">
-                    Criar Novo Colaborador
+                    Editar Questionário
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
                 <TextField
-                    label="Nome"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Fone"
-                    name="phone"
-                    value={formData.phone}
+                    label="Pergunta"
+                    name="question"
+                    value={formData.question}
                     onChange={handleChange}
                     required
                     size="small"
@@ -109,7 +89,7 @@ export const CreateCollaboratorModal: React.FC<CreateCollaboratorModalProps> = (
                     variant="contained"
                     disabled={loading}
                 >
-                    {loading ? <CircularProgress size={24} /> : 'Salvar'}
+                    {loading ? <CircularProgress size={24} /> : 'Salvar Alterações'}
                 </Button>
                 <Button onClick={onClose} variant="outlined">
                     Cancelar

@@ -33,33 +33,34 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
 
     return (
         <TableContainer component={Paper}>
-            <Table aria-label="tabela de imóveis">
+            <Table aria-label="tabela de imóveis" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Tipo</TableCell>
-                        <TableCell>Endereço</TableCell>
-                        <TableCell>Cidade</TableCell>
-                        <TableCell>UF</TableCell>
-                        <TableCell>Valor</TableCell>
-                        <TableCell>Descrição</TableCell>
-                        <TableCell align="right">Ações</TableCell>
+                        <TableCell sx={{py:0.2}}>Tipo</TableCell>
+                        <TableCell sx={{py:0.2}}>Endereço</TableCell>
+                        <TableCell sx={{py:0.2}}>Cidade</TableCell>
+                        <TableCell sx={{py:0.2}}>UF</TableCell>
+                        <TableCell sx={{py:0.2}}>Valor</TableCell>
+                        <TableCell sx={{py:0.2}}>Descrição</TableCell>
+                        <TableCell align="right" sx={{ py: 0.2 }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {imoveis.map((imovel) => (
                         <TableRow key={imovel._id}>
-                            <TableCell>{imovel.tipo}</TableCell>
-                            <TableCell>{imovel.endereco}</TableCell>
-                            <TableCell>{imovel.cidade}</TableCell>
-                            <TableCell>{imovel.uf}</TableCell>
-                            <TableCell>{imovel.valor}</TableCell>
-                            <TableCell>{imovel.descricao}</TableCell>
-                            <TableCell align="right">
+                            <TableCell sx={{py:0.2}}>{imovel.tipo}</TableCell>
+                            <TableCell sx={{py:0.2}}>{imovel.endereco}</TableCell>
+                            <TableCell sx={{py:0.2}}>{imovel.cidade}</TableCell>
+                            <TableCell sx={{py:0.2}}>{imovel.uf}</TableCell>
+                            <TableCell sx={{py:0.2}}>{imovel.valor}</TableCell>
+                            <TableCell sx={{py:0.2}}>{imovel.descricao}</TableCell>
+                            <TableCell align="right" sx={{ py: 0.2 }}>
                                 <ButtonGroup variant="contained" aria-label="Ações de Imóvel">
                                     <Button
                                         color="primary"
                                         onClick={() => onEdit(imovel)}
                                         startIcon={<EditIcon />}
+                                        sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
                                     >
                                         Editar
                                     </Button>
@@ -67,6 +68,7 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                                         color="error"
                                         onClick={() => onDelete(imovel)}
                                         startIcon={<DeleteIcon />}
+                                        sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
                                     >
                                         Excluir
                                     </Button>

@@ -10,13 +10,13 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-import { Collaborator } from '../../interfaces/collaborators';
-import { deleteCollaborators, fetchCollaborators } from '../services/CollaboratorsService';
-import { CollaboratorsTable } from '../tables/CollaboratorsTable';
-import { CreateCollaboratorModal } from '../Crud/CreateCollaboratorModal';
-import { EditCollaboratorModal } from '../Crud/EditCollaboratorsModal';
+import { Questionnaire } from '../../interfaces/questionnaire';
+import { deleteQuestionnaires, fetchQuestionnaires } from '../services/QuestionnairesService';
+import { QuestionnairesTable } from '../tables/QuestionnairesTable';
+import { CreateQuestionnaireModal } from '../Crud/CreateQuestionnaireModal';
+import { EditQuestionnaireModal } from '../Crud/EditQuestionnaireModal';
 
-interface collaboratorsModalProps {
+interface questionnairesModalProps {
     open: boolean;
     onClose: () => void;
 }
@@ -35,20 +35,20 @@ const modalStyle = {
     p: 4,
 };
 
-export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, onClose }) => {
+export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, onClose }) => {
     const [loading, setLoading] = React.useState<boolean>(false);
-    const [collaborators, setCollaborators] = React.useState<Collaborator[]>([]);
+    const [questionnaires, setQuestionnaires] = React.useState<Questionnaire[]>([]);
     const [error, setError] = React.useState<string | null>(null);
     const [message, setMessage] = React.useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false); // Novo estado
-    const [editingCollaborator, setEditingCollaborator] = React.useState<Collaborator | null>(null); // Novo estado
+    const [editingQuestionnaire, setEditingQuestionnaire] = React.useState<Questionnaire | null>(null); // Novo estado
 
     const loadData = async () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchCollaborators();
-            setCollaborators(data);
+            const data = await fetchQuestionnaires();
+            setQuestionnaires(data);
         } catch (err) {
             setError('Não foi possível carregar os dados. Tente novamente.');
         } finally {
@@ -61,6 +61,7 @@ export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, on
             loadData();
         }
     }, [open]);
+
     React.useEffect(() => {
         if (message) {
             const timer = setTimeout(() => {
@@ -82,34 +83,34 @@ export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, on
         setIsCreateModalOpen(true);
     };
 
-    const handleCreateSuccess = (newCollaborator: Collaborator) => {
-        setMessage('Colaborador criado com sucesso!');
+    const handleCreateSuccess = (newQuestionnaire: Questionnaire) => {
+        setMessage('Questionario criado com sucesso!');
         setIsCreateModalOpen(false);
         loadData();
     };
 
     // Nova função para abrir a modal de edição
-    const handleEdit = (collaborator: Collaborator) => {
-        setEditingCollaborator(collaborator); // Define o imóvel que será editado
+    const handleEdit = (questionnaire: Questionnaire) => {
+        setEditingQuestionnaire(questionnaire); // Define o imóvel que será editado
     };
 
     // Função de sucesso da edição
-    const handleEditSuccess = (updatedcollaborator: Collaborator) => {
+    const handleEditSuccess = (updatedquestionnaire: Questionnaire) => {
         setMessage('Imóvel atualizado com sucesso!');
-        setEditingCollaborator(null); // Fecha a modal de edição
+        setEditingQuestionnaire(null); // Fecha a modal de edição
         loadData(); // Recarrega os dados para mostrar a alteração
     };
 
-    const handleDelete = async (collaborator: Collaborator) => {
+    const handleDelete = async (questionnaire: Questionnaire) => {
         setMessage(null);
-        if (window.confirm(`Tem certeza que deseja excluir o colaborador "${collaborator.name}"?`)) {
+        if (window.confirm(`Tem certeza que deseja excluir o questionario "${questionnaire.question}"?`)) {
             setLoading(true);
             try {
-                await deleteCollaborators(collaborator._id);
+                await deleteQuestionnaires(questionnaire._id);
                 await loadData();
-                setMessage('Imóvel excluído com sucesso!');
+                setMessage('Questão excluída com sucesso!');
             } catch (err) {
-                setError('Falha ao excluir o imóvel.');
+                setError('Falha ao excluir o Questão.');
             } finally {
                 setLoading(false);
             }
@@ -133,7 +134,7 @@ export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, on
                         <CloseIcon />
                     </IconButton>
                     <Typography variant="h6" component="h2" mb={2}>
-                        Lista de Colaboradores IMOB
+                        Lista de Questionários IMOB
                     </Typography>
                     {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -143,7 +144,7 @@ export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, on
                         sx={{ mb: 2 }}
                         onClick={handleCreate}
                     >
-                        Criar Novo Colaborador
+                        Criar Novo Questionário
                     </Button>
                     {loading && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
@@ -152,7 +153,11 @@ export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, on
                     )}
 
                     {!loading && !error && (
-                        <CollaboratorsTable collaborators={collaborators} onEdit={handleEdit} onDelete={handleDelete} />
+                        <QuestionnairesTable 
+                        questionnaires={questionnaires} 
+                        onEdit={handleEdit} 
+                        onDelete={handleDelete} 
+                        />
                     )}
 
                     <Button onClick={onClose} sx={{ mt: 2 }}>
@@ -160,16 +165,16 @@ export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, on
                     </Button>
                 </Box>
             </Modal>
-            <CreateCollaboratorModal
+            <CreateQuestionnaireModal
                 open={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
                 onSuccess={handleCreateSuccess}
             />
             {/* Modal de Edição */}
-            <EditCollaboratorModal
-                open={!!editingCollaborator}
-                collaborator={editingCollaborator}
-                onClose={() => setEditingCollaborator(null)}
+            <EditQuestionnaireModal
+                open={!!editingQuestionnaire}
+                questionnaire={editingQuestionnaire}
+                onClose={() => setEditingQuestionnaire(null)}
                 onSuccess={handleEditSuccess}
             />
         </>

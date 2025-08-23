@@ -29,7 +29,7 @@ const modalStyle = {
     p: 4,
     display: 'flex',
     flexDirection: 'column',
-    gap: 1.5,
+    gap: 1,
 };
 
 export const EditCollaboratorModal: React.FC<EditCollaboratorModalProps> = ({ open, collaborator, onClose, onSuccess }) => {

@@ -11,7 +11,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { Imovel } from '../../interfaces/Imovel';
-import { deleteImovel, fetchImoveis, updateImovel } from '../services/imovesService';
+import { deleteImovel, fetchImoveis } from '../services/imovesService';
 import { ImoveisTable } from '../tables/ImoveisTable';
 import { CreateImovelModal } from '../Crud/CreateImovelModal';
 import { EditImovelModal } from '../Crud/EditImovelModal';
@@ -130,7 +130,7 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
                             position: 'absolute',
                             right: 8,
                             top: 8,
-                            color: (theme) => theme.palette.grey[500],
+                            color: (theme) => theme.palette.grey[900],
                         }}
                     >
                         <CloseIcon />

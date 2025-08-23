@@ -8,13 +8,13 @@ import {
     Alert,
     CircularProgress,
 } from '@mui/material';
-import { createCollaborators } from '../services/CollaboratorsService';
-import { Collaborator } from '../../interfaces/collaborators';
+import { createQuestionnaires } from '../services/QuestionnairesService';
+import { Questionnaire } from '../../interfaces/questionnaire';
 
-interface CreateCollaboratorModalProps {
+interface CreateQuestionnaireModalProps {
     open: boolean;
     onClose: () => void;
-    onSuccess: (collaborator: Collaborator) => void;
+    onSuccess: (questionnaire: Questionnaire) => void;
 }
 
 const modalStyle = {
@@ -31,21 +31,17 @@ const modalStyle = {
     gap: 1,
 };
 
-export const CreateCollaboratorModal: React.FC<CreateCollaboratorModalProps> = ({ open, onClose, onSuccess }) => {
+export const CreateQuestionnaireModal: React.FC<CreateQuestionnaireModalProps> = ({ open, onClose, onSuccess }) => {
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
     const [formData, setFormData] = React.useState({
-        name: '',
-        email: '',
-        phone: '',
+        question: '',
     });
 
     React.useEffect(() => {
         if (open) {
             setFormData({
-                name: '',
-                email: '',
-                phone: '',
+                question: '',
             });
             setError(null); // Também é uma boa prática limpar o estado de erro
         }
@@ -63,11 +59,11 @@ export const CreateCollaboratorModal: React.FC<CreateCollaboratorModalProps> = (
         setLoading(true);
         setError(null);
         try {
-            const newCollaborator = await createCollaborators(formData);
-            onSuccess(newCollaborator); // Chama a função de sucesso do componente pai
+            const newQuestionnaire = await createQuestionnaires(formData);
+            onSuccess(newQuestionnaire); // Chama a função de sucesso do componente pai
             onClose(); // Fecha a modal
         } catch (err) {
-            setError('Falha ao criar o colaborador. Verifique os dados e tente novamente.');
+            setError('Falha ao criar o questionário. Verifique os dados e tente novamente.');
         } finally {
             setLoading(false);
         }
@@ -77,29 +73,13 @@ export const CreateCollaboratorModal: React.FC<CreateCollaboratorModalProps> = (
         <Modal open={open} onClose={onClose}>
             <Box sx={modalStyle} component="form" onSubmit={handleSubmit}>
                 <Typography variant="h6" component="h2">
-                    Criar Novo Colaborador
+                    Criar Novo Questionário
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
                 <TextField
-                    label="Nome"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Fone"
-                    name="phone"
-                    value={formData.phone}
+                    label="Pergunta"
+                    name="question"
+                    value={formData.question}
                     onChange={handleChange}
                     required
                     size="small"
