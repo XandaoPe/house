@@ -15,6 +15,8 @@ import { deleteQuestionnaires, fetchQuestionnaires } from '../services/Questionn
 import { QuestionnairesTable } from '../tables/QuestionnairesTable';
 import { CreateQuestionnaireModal } from '../Crud/CreateQuestionnaireModal';
 import { EditQuestionnaireModal } from '../Crud/EditQuestionnaireModal';
+import { Response } from '../../interfaces/response';
+import { CreateResponseModal } from '../Crud/CreateResponseModal';
 
 interface questionnairesModalProps {
     open: boolean;
@@ -40,8 +42,10 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
     const [questionnaires, setQuestionnaires] = React.useState<Questionnaire[]>([]);
     const [error, setError] = React.useState<string | null>(null);
     const [message, setMessage] = React.useState<string | null>(null);
-    const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false); // Novo estado
+    const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
     const [editingQuestionnaire, setEditingQuestionnaire] = React.useState<Questionnaire | null>(null); // Novo estado
+    const [response, setResponse] = React.useState(false);
+    const [questionId, setQuestionId] = React.useState<any | null>();
 
     const loadData = async () => {
         setLoading(true);
@@ -117,6 +121,15 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
         }
     };
 
+    const handleResponse = () => {
+        setResponse(true);
+    };
+
+    const handleResponseSuccess = (createResponse: Response) => {
+        setMessage('Resposta criada com sucesso!');
+        setResponse(false); // Fecha a modal de edição
+    };
+
     return (
         <>
             <Modal open={open} onClose={onClose}>
@@ -152,13 +165,21 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
                         </Box>
                     )}
 
-                    {!loading && !error && (
+                    {/* {!loading && !error && (
                         <QuestionnairesTable 
                         questionnaires={questionnaires} 
                         onEdit={handleEdit} 
-                        onDelete={handleDelete} 
+                        onDelete={handleDelete}
+                            questionId={setQuestionId, handleResponse}
                         />
-                    )}
+                    )} */}
+
+                    <QuestionnairesTable
+                        questionnaires={questionnaires}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        responseHandler={{ setQuestionId, handleResponse }} // Passando um objeto
+                    />
 
                     <Button onClick={onClose} sx={{ mt: 2 }}>
                         Fechar
@@ -176,6 +197,12 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
                 questionnaire={editingQuestionnaire}
                 onClose={() => setEditingQuestionnaire(null)}
                 onSuccess={handleEditSuccess}
+            />
+            <CreateResponseModal
+                open={!!response}
+                onClose={() => setResponse(false)}
+                onSuccess={handleResponseSuccess}
+                questionId={questionId}
             />
         </>
     );

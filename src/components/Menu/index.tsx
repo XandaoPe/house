@@ -15,6 +15,7 @@ import QuizIcon from '@mui/icons-material/Quiz';
 import { ImoveisModal } from '../Modal/ImobModal';
 import { CollaboratorsModal } from '../Modal/CollaboratorModal';
 import { QuestionnairesModal } from '../Modal/QuestionnaireModal';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -83,7 +84,7 @@ export default function Menu() {
         };
 
 
-    return (        
+    return (
         <Box>
             <Accordion
                 expanded={expanded === 'panel1'}
@@ -125,8 +126,8 @@ export default function Menu() {
             <CollaboratorsModal
                 open={isModalOpenCollaborators}
                 onClose={handleCloseModalCollaborators}
-                />
-            <QuestionnairesModal 
+            />
+            <QuestionnairesModal
                 open={isModalOpenQuestionnaires}
                 onClose={handleCloseModalQuestionnaires}
             />

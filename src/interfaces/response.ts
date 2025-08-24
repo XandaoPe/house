@@ -1,5 +1,5 @@
 export interface Response {
     _id: any;
     questionresponse: string;
-    id_question: any;
+    id_question: string;
 }

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Response } from '../../interfaces/response';
 
 // const API_URL = 'https://imob-back-yc5k.onrender.com/responses';
-const API_URL = 'http://localhost:5000/response';
+const API_URL = 'http://localhost:5000/responses';
 
 export const fetchResponses = async (): Promise<Response[]> => {
     try {
@@ -18,6 +18,7 @@ export const fetchResponses = async (): Promise<Response[]> => {
 export const createResponses = async (responses: Omit<Response, '_id'>): Promise<Response> => {
 
     try {
+        console.log('responses...', responses)
         const response = await axios.post<Response>(API_URL, responses);
         return response.data;
     } catch (error) {

@@ -14,15 +14,18 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Questionnaire } from '../../interfaces/questionnaire';
-import ReplyIcon from '@mui/icons-material/Reply';
-
+import EditNoteIcon from '@mui/icons-material/EditNote';
 interface questionnairesTableProps {
     questionnaires: Questionnaire[];
     onEdit: (questionnaire: Questionnaire) => void;
     onDelete: (questionnaire: Questionnaire) => void;
+    responseHandler: {
+        setQuestionId: (id: string) => void;
+        handleResponse: () => void;
+    };
 }
 
-export const QuestionnairesTable: React.FC<questionnairesTableProps> = ({ questionnaires,  onDelete, onEdit}) => {
+export const QuestionnairesTable: React.FC<questionnairesTableProps> = ({ questionnaires,  onDelete, onEdit, responseHandler}) => {
     if (questionnaires.length === 0) {
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
@@ -61,6 +64,17 @@ export const QuestionnairesTable: React.FC<questionnairesTableProps> = ({ questi
                                         sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
                                     >
                                         Excluir
+                                    </Button>
+                                    <Button
+                                        color='secondary'
+                                        onClick={() =>{
+                                            responseHandler.setQuestionId(questionnaire._id);
+                                            responseHandler.handleResponse();
+                                        }}
+                                        startIcon={<EditNoteIcon />}
+                                        sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
+                                    >
+                                        Responder
                                     </Button>
                                 </ButtonGroup>
                             </TableCell>
