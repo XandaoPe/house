@@ -8,7 +8,7 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import HouseIcon from '@mui/icons-material/House';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import QuizIcon from '@mui/icons-material/Quiz';
@@ -16,11 +16,11 @@ import { ImoveisModal } from '../Modal/ImobModal';
 import { CollaboratorsModal } from '../Modal/CollaboratorModal';
 import { QuestionnairesModal } from '../Modal/QuestionnaireModal';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import ReplyIcon from '@mui/icons-material/Reply';
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
-
     backgroundColor: 'transparent',
     maxWidth: '30%',
     color: 'white',
@@ -32,10 +32,6 @@ const Accordion = styled((props: AccordionProps) => (
         margin: 0,
         backgroundColor: 'rgba(32, 178, 170, 0.15)'
     },
-    '&:hover .MuiTypography-root': {
-        color: 'rgba(173, 239, 235, 0.5)'
-    },
-
 }));
 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
@@ -45,7 +41,6 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     />
 ))(({ theme }) => ({
     backgroundColor: 'rgba(0, 0, 0, .03)',
-    // backgroundColor: 'transparent',
     flexDirection: 'row-reverse',
     [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]:
     {
@@ -57,6 +52,9 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     ...theme.applyStyles('dark', {
         backgroundColor: 'rgba(255, 255, 255, .05)',
     }),
+    '&:hover .MuiTypography-root': {
+        color: 'rgba(173, 239, 235, 0.5)',
+    },
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
@@ -64,12 +62,12 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
-
 export default function Menu() {
     const [expanded, setExpanded] = React.useState<string | false>('panel1');
     const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
     const [isModalOpenCollaborators, setIsModalOpenCollaborators] = React.useState<boolean>(false);
     const [isModalOpenQuestionnaires, setIsModalOpenQuestionnaires] = React.useState<boolean>(false);
+    const [innerExpanded, setInnerExpanded] = React.useState<string | false>(false);
 
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
@@ -83,6 +81,10 @@ export default function Menu() {
             setExpanded(newExpanded ? panel : false);
         };
 
+    const handleInnerChange =
+        (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+            setInnerExpanded(newExpanded ? panel : false);
+        };
 
     return (
         <Box>
@@ -111,12 +113,34 @@ export default function Menu() {
             <Accordion
                 expanded={expanded === 'panel3'}
                 onChange={handleChange('panel3')}
-                onClick={handleOpenModalQuestionnaires}
             >
                 <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                     <QuizIcon sx={{ mr: 1 }} />
                     <Typography component="span">Questionário</Typography>
                 </AccordionSummary>
+                <AccordionDetails>
+                    <Accordion
+                        expanded={innerExpanded === 'panel3a'}
+                        onChange={handleInnerChange('panel3a')}
+                        sx={{ maxWidth: '100%' }} // Ajusta a largura para o container
+                    >
+                        <AccordionSummary aria-controls="panel3a-content" id="panel3a-header" onClick={handleOpenModalQuestionnaires}>
+                            <QuestionAnswerIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Questões</Typography>
+                        </AccordionSummary>
+                    </Accordion>
+                    <Accordion
+                        expanded={innerExpanded === 'panel3b'}
+                        onChange={handleInnerChange('panel3b')}
+                        sx={{ maxWidth: '100%' }} // Ajusta a largura para o container
+                    >
+                        <AccordionSummary aria-controls="panel3b-content" id="panel3b-header">
+                            <ReplyIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Respostas</Typography>
+                        </AccordionSummary>
+
+                    </Accordion>
+                </AccordionDetails>
             </Accordion>
 
             <ImoveisModal
@@ -131,7 +155,6 @@ export default function Menu() {
                 open={isModalOpenQuestionnaires}
                 onClose={handleCloseModalQuestionnaires}
             />
-
         </Box>
     );
 }
