@@ -25,7 +25,10 @@ interface questionnairesTableProps {
     };
 }
 
+
 export const QuestionnairesTable: React.FC<questionnairesTableProps> = ({ questionnaires,  onDelete, onEdit, responseHandler}) => {
+    const [question,setQuestion] = React.useState('')
+    console.log('questionnaire...', questionnaires)
     if (questionnaires.length === 0) {
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
@@ -70,6 +73,7 @@ export const QuestionnairesTable: React.FC<questionnairesTableProps> = ({ questi
                                         onClick={() =>{
                                             responseHandler.setQuestionId(questionnaire._id);
                                             responseHandler.handleResponse();
+                                            setQuestion(questionnaire.question);
                                         }}
                                         startIcon={<EditNoteIcon />}
                                         sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}

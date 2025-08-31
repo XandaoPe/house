@@ -15,6 +15,16 @@ export const fetchResponses = async (): Promise<Response[]> => {
     }
 };
 
+export const fetchResponsesByQuestionId = async (questionId: string): Promise<Response[]> => {
+    try {
+        const response = await axios.get<Response[]>(`${API_URL}/by-question/${questionId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Erro ao buscar respostas para a pergunta ${questionId}:`, error);
+        throw new Error('Não foi possível carregar as respostas filtradas. Tente novamente.');
+    }
+};
+
 export const createResponses = async (responses: Omit<Response, '_id'>): Promise<Response> => {
 
     try {

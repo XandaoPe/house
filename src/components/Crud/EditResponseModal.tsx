@@ -8,15 +8,14 @@ import {
     Alert,
     CircularProgress,
 } from '@mui/material';
-import { createResponses } from '../services/responseService';
+import { updateResponses } from '../services/responseService';
 import { Response } from '../../interfaces/response';
 
-interface CreateResponseModalProps {
+interface EditResponseModalProps {
     open: boolean;
+    response: Response | null;
     onClose: () => void;
     onSuccess: (response: Response) => void;
-    questionId: any;
-    questionDescription?: string;
 }
 
 const modalStyle = {
@@ -33,23 +32,20 @@ const modalStyle = {
     gap: 1,
 };
 
-export const CreateResponseModal: React.FC<CreateResponseModalProps> = ({ open, onClose, onSuccess, questionId, questionDescription }) => {
+export const EditResponseModal: React.FC<EditResponseModalProps> = ({ open, response, onClose, onSuccess }) => {
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
-    const [formData, setFormData] = React.useState({
-        questionresponse: '',
-        id_question: questionId, // [ALTERAÇÃO] Inicializa o estado com o ID da pergunta
-    });
+    const [formData, setFormData] = React.useState<Response | null>(null);
 
     React.useEffect(() => {
-        if (open) {
-            setFormData({
-                questionresponse: '',
-                id_question: questionId, // [ALTERAÇÃO] Re-inicializa o estado ao abrir, com o ID da prop
-            });
-            setError(null);
+        if (response) {
+            setFormData(response);
         }
-    }, [open, questionId]); // Adiciona questionId como dependência
+    }, [response]);
+
+    if (!formData) {
+        return null;
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -63,12 +59,11 @@ export const CreateResponseModal: React.FC<CreateResponseModalProps> = ({ open, 
         setLoading(true);
         setError(null);
         try {
-            // Não é mais necessário fazer formData.id_question = questionId;
-            const newResponse = await createResponses(formData);
-            onSuccess(newResponse);
-            onClose();
+            await updateResponses(formData);
+            onSuccess(formData); // Chama o callback de sucesso com os dados atualizados
+            onClose(); // Fecha a modal
         } catch (err) {
-            setError('Falha ao criar a resposta. Verifique os dados e tente novamente.');
+            setError('Falha ao atualizar o Resposta. Verifique os dados e tente novamente.');
         } finally {
             setLoading(false);
         }
@@ -78,7 +73,7 @@ export const CreateResponseModal: React.FC<CreateResponseModalProps> = ({ open, 
         <Modal open={open} onClose={onClose}>
             <Box sx={modalStyle} component="form" onSubmit={handleSubmit}>
                 <Typography variant="h6" component="h2">
-                    {questionDescription} ?
+                    Editar Imóvel
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
                 <TextField
@@ -94,7 +89,7 @@ export const CreateResponseModal: React.FC<CreateResponseModalProps> = ({ open, 
                     variant="contained"
                     disabled={loading}
                 >
-                    {loading ? <CircularProgress size={24} /> : 'Salvar'}
+                    {loading ? <CircularProgress size={24} /> : 'Salvar Alterações'}
                 </Button>
                 <Button onClick={onClose} variant="outlined">
                     Cancelar

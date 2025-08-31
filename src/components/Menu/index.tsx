@@ -17,6 +17,8 @@ import { CollaboratorsModal } from '../Modal/CollaboratorModal';
 import { QuestionnairesModal } from '../Modal/QuestionnaireModal';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import ReplyIcon from '@mui/icons-material/Reply';
+import { ResponsesModal } from '../Modal/ResponseModal';
+import { ResponseQuestionsModal } from '../Modal/ResponseQuestionsModal';
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -67,6 +69,8 @@ export default function Menu() {
     const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
     const [isModalOpenCollaborators, setIsModalOpenCollaborators] = React.useState<boolean>(false);
     const [isModalOpenQuestionnaires, setIsModalOpenQuestionnaires] = React.useState<boolean>(false);
+    const [isModalOpenQuestionsResponses, setIsModalOpenQuestionsResponses] = React.useState<boolean>(false);
+    const [isModalOpenResponses, setIsModalOpenResponses] = React.useState<boolean>(false);
     const [innerExpanded, setInnerExpanded] = React.useState<string | false>(false);
 
     const handleOpenModal = () => setIsModalOpen(true);
@@ -75,6 +79,10 @@ export default function Menu() {
     const handleCloseModalCollaborators = () => setIsModalOpenCollaborators(false);
     const handleOpenModalQuestionnaires = () => setIsModalOpenQuestionnaires(true);
     const handleCloseModalQuestionnaires = () => setIsModalOpenQuestionnaires(false);
+    const handleOpenModalResponses = () => setIsModalOpenResponses(true);
+    const handleCloseModalResponses = () => setIsModalOpenResponses(false);
+    const handleOpenModalQuestionsResponses = () => setIsModalOpenQuestionsResponses(true);
+    const handleCloseModalQuestionsResponses = () => setIsModalOpenQuestionsResponses(false);
 
     const handleChange =
         (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -124,17 +132,40 @@ export default function Menu() {
                         onChange={handleInnerChange('panel3a')}
                         sx={{ maxWidth: '100%' }} // Ajusta a largura para o container
                     >
-                        <AccordionSummary aria-controls="panel3a-content" id="panel3a-header" onClick={handleOpenModalQuestionnaires}>
+                        <AccordionSummary 
+                        aria-controls="panel3a-content" 
+                        id="panel3a-header" 
+                        onClick={handleOpenModalQuestionnaires}
+                        >
                             <QuestionAnswerIcon sx={{ mr: 1 }} />
                             <Typography component="span">Questões</Typography>
                         </AccordionSummary>
                     </Accordion>
-                    <Accordion
+                    {/* <Accordion
                         expanded={innerExpanded === 'panel3b'}
                         onChange={handleInnerChange('panel3b')}
                         sx={{ maxWidth: '100%' }} // Ajusta a largura para o container
                     >
-                        <AccordionSummary aria-controls="panel3b-content" id="panel3b-header">
+                        <AccordionSummary 
+                        aria-controls="panel3b-content" 
+                        id="panel3b-header"
+                        onClick={handleOpenModalResponses}
+                        >
+                            <ReplyIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Respostas</Typography>
+                        </AccordionSummary>
+
+                    </Accordion> */}
+                    <Accordion
+                        expanded={innerExpanded === 'panel3c'}
+                        onChange={handleInnerChange('panel3c')}
+                        sx={{ maxWidth: '100%' }} // Ajusta a largura para o container
+                    >
+                        <AccordionSummary 
+                        aria-controls="panel3b-content" 
+                        id="panel3b-header"
+                        onClick={handleOpenModalQuestionsResponses}
+                        >
                             <ReplyIcon sx={{ mr: 1 }} />
                             <Typography component="span">Respostas</Typography>
                         </AccordionSummary>
@@ -154,6 +185,14 @@ export default function Menu() {
             <QuestionnairesModal
                 open={isModalOpenQuestionnaires}
                 onClose={handleCloseModalQuestionnaires}
+            />
+            {/* <ResponsesModal
+                open={isModalOpenResponses}
+                onClose={handleCloseModalResponses}
+            /> */}
+            <ResponseQuestionsModal
+                open={isModalOpenQuestionsResponses}
+                onClose={handleCloseModalQuestionsResponses}
             />
         </Box>
     );

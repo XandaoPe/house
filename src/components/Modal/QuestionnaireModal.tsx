@@ -37,7 +37,7 @@ const modalStyle = {
     p: 4,
 };
 
-export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, onClose }) => {
+export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, onClose}) => {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [questionnaires, setQuestionnaires] = React.useState<Questionnaire[]>([]);
     const [error, setError] = React.useState<string | null>(null);
@@ -178,7 +178,7 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
                         questionnaires={questionnaires}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
-                        responseHandler={{ setQuestionId, handleResponse }} // Passando um objeto
+                        responseHandler={{ setQuestionId, handleResponse }}                        
                     />
 
                     <Button onClick={onClose} sx={{ mt: 2 }}>
