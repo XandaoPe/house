@@ -141,21 +141,7 @@ export default function Menu() {
                             <Typography component="span">Questões</Typography>
                         </AccordionSummary>
                     </Accordion>
-                    {/* <Accordion
-                        expanded={innerExpanded === 'panel3b'}
-                        onChange={handleInnerChange('panel3b')}
-                        sx={{ maxWidth: '100%' }} // Ajusta a largura para o container
-                    >
-                        <AccordionSummary 
-                        aria-controls="panel3b-content" 
-                        id="panel3b-header"
-                        onClick={handleOpenModalResponses}
-                        >
-                            <ReplyIcon sx={{ mr: 1 }} />
-                            <Typography component="span">Respostas</Typography>
-                        </AccordionSummary>
 
-                    </Accordion> */}
                     <Accordion
                         expanded={innerExpanded === 'panel3c'}
                         onChange={handleInnerChange('panel3c')}
