@@ -8,7 +8,7 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import HouseIcon from '@mui/icons-material/House';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import QuizIcon from '@mui/icons-material/Quiz';
@@ -19,6 +19,9 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import ReplyIcon from '@mui/icons-material/Reply';
 import { ResponsesModal } from '../Modal/ResponseModal';
 import { ResponseQuestionsModal } from '../Modal/ResponseQuestionsModal';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import GroupsIcon from '@mui/icons-material/Groups';
+import GavelIcon from '@mui/icons-material/Gavel';
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -65,13 +68,14 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 export default function Menu() {
-    const [expanded, setExpanded] = React.useState<string | false>('panel1');
+    const [expanded, setExpanded] = React.useState<string | false>(false);
     const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
     const [isModalOpenCollaborators, setIsModalOpenCollaborators] = React.useState<boolean>(false);
     const [isModalOpenQuestionnaires, setIsModalOpenQuestionnaires] = React.useState<boolean>(false);
     const [isModalOpenQuestionsResponses, setIsModalOpenQuestionsResponses] = React.useState<boolean>(false);
     const [isModalOpenResponses, setIsModalOpenResponses] = React.useState<boolean>(false);
     const [innerExpanded, setInnerExpanded] = React.useState<string | false>(false);
+    const [candidatosInnerExpanded, setCandidatosInnerExpanded] = React.useState<string | false>(false);
 
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
@@ -89,73 +93,142 @@ export default function Menu() {
             setExpanded(newExpanded ? panel : false);
         };
 
+    const handleMainChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+        if (newExpanded) {
+            setExpanded(panel);
+        } else {
+            setExpanded(false);
+        }
+    };
+
     const handleInnerChange =
         (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
             setInnerExpanded(newExpanded ? panel : false);
         };
 
+    const handleCandidatosInnerChange =
+        (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+            setCandidatosInnerExpanded(newExpanded ? panel : false);
+        };
+
     return (
         <Box>
             <Accordion
-                expanded={expanded === 'panel1'}
-                onChange={handleChange('panel1')}
-                onClick={handleOpenModal}
+                expanded={expanded === 'panelCandidatos'}
+                onChange={handleMainChange('panelCandidatos')}
             >
-                <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                    <HouseIcon sx={{ mr: 1 }} />
-                    <Typography component="span">Casas</Typography>
-                </AccordionSummary>
-            </Accordion>
-
-            <Accordion
-                expanded={expanded === 'panel2'}
-                onChange={handleChange('panel2')}
-                onClick={handleOpenModalCollaborators}
-            >
-                <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-                    <EngineeringIcon sx={{ mr: 1 }} />
+                <AccordionSummary aria-controls="panelCandidatos-content" id="panelCandidatos-header">
+                    <GroupsIcon sx={{ mr: 1 }} />
                     <Typography component="span">Candidatos</Typography>
-                </AccordionSummary>
-            </Accordion>
-
-            <Accordion
-                expanded={expanded === 'panel3'}
-                onChange={handleChange('panel3')}
-            >
-                <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-                    <QuizIcon sx={{ mr: 1 }} />
-                    <Typography component="span">Questionário</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Accordion
-                        expanded={innerExpanded === 'panel3a'}
-                        onChange={handleInnerChange('panel3a')}
-                        sx={{ maxWidth: '100%' }} // Ajusta a largura para o container
+                        expanded={candidatosInnerExpanded === 'panelCandidatosCasas'}
+                        onChange={handleCandidatosInnerChange('panelCandidatosCasas')}
+                        // onClick={handleOpenModal}
+                        sx={{ maxWidth: '100%', mb: 0 }}
                     >
-                        <AccordionSummary 
-                        aria-controls="panel3a-content" 
-                        id="panel3a-header" 
-                        onClick={handleOpenModalQuestionnaires}
-                        >
-                            <QuestionAnswerIcon sx={{ mr: 1 }} />
-                            <Typography component="span">Questões</Typography>
+                        <AccordionSummary aria-controls="panelCandidatosCasas-content" id="panelCandidatosCasas-header">
+                            <HouseIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Casas</Typography>
+                        </AccordionSummary>
+                    </Accordion>
+                    <Accordion
+                        expanded={candidatosInnerExpanded === 'panelCandidatosRegras'}
+                        onChange={handleCandidatosInnerChange('panelCandidatosRegras')}
+                        sx={{ maxWidth: '100%', mb: 0 }}
+                    >
+                        <AccordionSummary aria-controls="panelCandidatosRegras-content" id="panelCandidatosRegras-header">
+                            <GavelIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Regras</Typography>
+                        </AccordionSummary>
+                    </Accordion>
+                    <Accordion
+                        expanded={candidatosInnerExpanded === 'panelCandidatosQuestionario'}
+                        onChange={handleCandidatosInnerChange('panelCandidatosQuestionario')}
+                        sx={{ maxWidth: '100%', mb: 0 }}
+                    >
+                        <AccordionSummary aria-controls="panelCandidatosQuestionario-content" id="panelCandidatosQuestionario-header">
+                            <QuizIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Questionário</Typography>
+                        </AccordionSummary>
+                    </Accordion>
+                </AccordionDetails>
+            </Accordion>
+
+            <Accordion
+                expanded={expanded === 'panelADM'}
+                onChange={handleMainChange('panelADM')}
+            >
+                <AccordionSummary aria-controls="panelADM-content" id="panelADM-header">
+                    <AdminPanelSettingsIcon sx={{ mr: 1 }} />
+                    <Typography component="span">ADM</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Accordion
+                        expanded={innerExpanded === 'panel1'}
+                        onChange={handleInnerChange('panel1')}
+                        onClick={handleOpenModal}
+                        sx={{ maxWidth: '100%', mb: 0 }}
+                    >
+                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                            <HouseIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Casas</Typography>
                         </AccordionSummary>
                     </Accordion>
 
                     <Accordion
-                        expanded={innerExpanded === 'panel3c'}
-                        onChange={handleInnerChange('panel3c')}
-                        sx={{ maxWidth: '100%' }} // Ajusta a largura para o container
+                        expanded={innerExpanded === 'panel2'}
+                        onChange={handleInnerChange('panel2')}
+                        onClick={handleOpenModalCollaborators}
+                        sx={{ maxWidth: '100%', mb: 0 }}
                     >
-                        <AccordionSummary 
-                        aria-controls="panel3b-content" 
-                        id="panel3b-header"
-                        onClick={handleOpenModalQuestionsResponses}
-                        >
-                            <ReplyIcon sx={{ mr: 1 }} />
-                            <Typography component="span">Respostas</Typography>
+                        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+                            <EngineeringIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Candidatos</Typography>
                         </AccordionSummary>
+                    </Accordion>
 
+                    <Accordion
+                        expanded={innerExpanded === 'panel3'}
+                        onChange={handleInnerChange('panel3')}
+                        sx={{ maxWidth: '100%', mb: 0 }}
+                    >
+                        <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
+                            <QuizIcon sx={{ mr: 1 }} />
+                            <Typography component="span">Questionário</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Accordion
+                                expanded={innerExpanded === 'panel3a'}
+                                onChange={handleInnerChange('panel3a')}
+                                sx={{ maxWidth: '100%' }}
+                            >
+                                <AccordionSummary
+                                    aria-controls="panel3a-content"
+                                    id="panel3a-header"
+                                    onClick={handleOpenModalQuestionnaires}
+                                >
+                                    <QuestionAnswerIcon sx={{ mr: 1 }} />
+                                    <Typography component="span">Questões</Typography>
+                                </AccordionSummary>
+                            </Accordion>
+
+                            <Accordion
+                                expanded={innerExpanded === 'panel3c'}
+                                onChange={handleInnerChange('panel3c')}
+                                sx={{ maxWidth: '100%' }}
+                            >
+                                <AccordionSummary
+                                    aria-controls="panel3b-content"
+                                    id="panel3b-header"
+                                    onClick={handleOpenModalQuestionsResponses}
+                                >
+                                    <ReplyIcon sx={{ mr: 1 }} />
+                                    <Typography component="span">Respostas</Typography>
+                                </AccordionSummary>
+                            </Accordion>
+                        </AccordionDetails>
                     </Accordion>
                 </AccordionDetails>
             </Accordion>
@@ -172,10 +245,6 @@ export default function Menu() {
                 open={isModalOpenQuestionnaires}
                 onClose={handleCloseModalQuestionnaires}
             />
-            {/* <ResponsesModal
-                open={isModalOpenResponses}
-                onClose={handleCloseModalResponses}
-            /> */}
             <ResponseQuestionsModal
                 open={isModalOpenQuestionsResponses}
                 onClose={handleCloseModalQuestionsResponses}
