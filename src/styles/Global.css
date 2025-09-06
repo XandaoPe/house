@@ -8,6 +8,7 @@
     background-image: url('/public/bougainMainFosco.jpg');
     background-size: cover;
     background-repeat: no-repeat;
+    overflow-x: hidden;
   }
 
   .house-title {
@@ -19,4 +20,20 @@
     flex-direction: column;
     align-items: center;
     /* height: 100vh; */
+  }
+
+  /* Garante que acordions não causem overflow */
+  .MuiAccordion-root {
+    max-width: 100% !important;
+  }
+
+  .MuiAccordionSummary-content {
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .css-tg1yy9-MuiDrawer-docked .MuiDrawer-paper {
+    box-sizing: border-box;
+    width: 300px;
+    overflow: hidden;
   }

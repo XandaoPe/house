@@ -137,8 +137,18 @@ export default function MenuLateral() {
             backgroundColor: '#1e1e1e',
             color: 'white',
             height: '100vh',
-            padding: '16px'
+            padding: '16px',
+            overflow: 'hidden', // IMPEDE SCROLL EM AMBOS OS EIXOS
+            display: 'flex',
+            flexDirection: 'column'
+
+            // width: drawerWidth,
+            // backgroundColor: '#1e1e1e',
+            // color: 'white',
+            // height: '100vh',
+            // padding: '16px'
         }}>
+
             {/* Cabeçalho do Menu */}
             <Box sx={{
                 display: 'flex',
@@ -188,7 +198,21 @@ export default function MenuLateral() {
             </Box>
 
             {/* Conteúdo do Menu */}
-            <Box sx={{ overflowY: 'hidden', overflowX: 'hidden' }}>
+            <Box sx={{ 
+                flex: 1,
+                overflowY: 'auto', // SCROLL VERTICAL APENAS
+                overflowX: 'hidden', // IMPEDE SCROLL HORIZONTAL
+                '&::-webkit-scrollbar': {
+                    width: '8px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                    borderRadius: '4px',
+                },
+                '&::-webkit-scrollbar-thumb:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                }
+                }}>
             {/* <Box sx={{
                 overflow: 'hidden', // Remove a barra de scroll
                 height: 'calc(100vh - 180px)',
