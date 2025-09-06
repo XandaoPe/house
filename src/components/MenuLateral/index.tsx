@@ -33,6 +33,8 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { ChangePasswordModal } from '../Modal/ChangePasswordModal'; // Importe o novo modal
+import KeyIcon from '@mui/icons-material/Key';
 
 const drawerWidth = 300;
 
@@ -86,6 +88,7 @@ export default function MenuLateral() {
     const [isModalOpenUsers, setIsModalOpenUsers] = React.useState<boolean>(false);
     const [isModalOpenQuestionnaires, setIsModalOpenQuestionnaires] = React.useState<boolean>(false);
     const [isModalOpenQuestionsResponses, setIsModalOpenQuestionsResponses] = React.useState<boolean>(false);
+    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false); // NOVO ESTADO
     const [innerExpanded, setInnerExpanded] = React.useState<string | false>(false);
     const [usuáriosInnerExpanded, setUsuáriosInnerExpanded] = React.useState<string | false>(false);
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -130,6 +133,8 @@ export default function MenuLateral() {
     const handleCloseModalQuestionnaires = () => setIsModalOpenQuestionnaires(false);
     const handleOpenModalQuestionsResponses = () => setIsModalOpenQuestionsResponses(true);
     const handleCloseModalQuestionsResponses = () => setIsModalOpenQuestionsResponses(false);
+    const handleOpenChangePasswordModal = () => setIsChangePasswordModalOpen(true);
+    const handleCloseChangePasswordModal = () => setIsChangePasswordModalOpen(false);
 
     const drawer = (
         <Box sx={{
@@ -343,6 +348,17 @@ export default function MenuLateral() {
                     </Accordion>
                 )}
 
+                <Accordion
+                    expanded={expanded === 'panelPassword'}
+                    onChange={handleMainChange('panelPassword')}
+                    onClick={handleOpenChangePasswordModal} // Aciona o modal ao clicar
+                >
+                    <AccordionSummary aria-controls="panelPassword-content" id="panelPassword-header">
+                        <KeyIcon sx={{ mr: 1 }} />
+                        <Typography component="span">Alterar Senha</Typography>
+                    </AccordionSummary>
+                </Accordion>
+
             </Box>
         </Box>
     );
@@ -418,6 +434,11 @@ export default function MenuLateral() {
                 open={isModalOpenQuestionsResponses}
                 onClose={handleCloseModalQuestionsResponses}
             />
+            <ChangePasswordModal
+                open={isChangePasswordModalOpen}
+                onClose={handleCloseChangePasswordModal}
+            />
+
         </>
     );
 }
