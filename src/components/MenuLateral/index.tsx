@@ -22,7 +22,7 @@ import HouseIcon from '@mui/icons-material/House';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import QuizIcon from '@mui/icons-material/Quiz';
 import { ImoveisModal } from '../Modal/ImobModal';
-import { CollaboratorsModal } from '../Modal/CollaboratorModal';
+import { UsersModal } from '../Modal/UserModal';
 import { QuestionnairesModal } from '../Modal/QuestionnaireModal';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import ReplyIcon from '@mui/icons-material/Reply';
@@ -83,11 +83,11 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 export default function MenuLateral() {
     const [expanded, setExpanded] = React.useState<string | false>(false);
     const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
-    const [isModalOpenCollaborators, setIsModalOpenCollaborators] = React.useState<boolean>(false);
+    const [isModalOpenUsers, setIsModalOpenUsers] = React.useState<boolean>(false);
     const [isModalOpenQuestionnaires, setIsModalOpenQuestionnaires] = React.useState<boolean>(false);
     const [isModalOpenQuestionsResponses, setIsModalOpenQuestionsResponses] = React.useState<boolean>(false);
     const [innerExpanded, setInnerExpanded] = React.useState<string | false>(false);
-    const [candidatosInnerExpanded, setCandidatosInnerExpanded] = React.useState<string | false>(false);
+    const [usuáriosInnerExpanded, setUsuáriosInnerExpanded] = React.useState<string | false>(false);
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const { user, logout, hasPermission } = useAuth();
     const navigate = useNavigate();
@@ -117,15 +117,15 @@ export default function MenuLateral() {
         setInnerExpanded(newExpanded ? panel : false);
     };
 
-    const handleCandidatosInnerChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-        setCandidatosInnerExpanded(newExpanded ? panel : false);
+    const handleUsuáriosInnerChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+        setUsuáriosInnerExpanded(newExpanded ? panel : false);
     };
 
     // Funções para modais (mantenha as existentes)
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
-    const handleOpenModalCollaborators = () => setIsModalOpenCollaborators(true);
-    const handleCloseModalCollaborators = () => setIsModalOpenCollaborators(false);
+    const handleOpenModalUsers = () => setIsModalOpenUsers(true);
+    const handleCloseModalUsers = () => setIsModalOpenUsers(false);
     const handleOpenModalQuestionnaires = () => setIsModalOpenQuestionnaires(true);
     const handleCloseModalQuestionnaires = () => setIsModalOpenQuestionnaires(false);
     const handleOpenModalQuestionsResponses = () => setIsModalOpenQuestionsResponses(true);
@@ -241,12 +241,12 @@ export default function MenuLateral() {
                             <Accordion
                                 expanded={innerExpanded === 'panel2'}
                                 onChange={handleInnerChange('panel2')}
-                                onClick={handleOpenModalCollaborators}
+                                onClick={handleOpenModalUsers}
                                 sx={{ maxWidth: '100%', mb: 0 }}
                             >
                                 <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
                                     <EngineeringIcon sx={{ mr: 1 }} />
-                                    <Typography component="span">Candidatos</Typography>
+                                    <Typography component="span">Usuários</Typography>
                                 </AccordionSummary>
                             </Accordion>
 
@@ -300,41 +300,41 @@ export default function MenuLateral() {
                     // {(hasPermission('ADMIN') || hasPermission('USER')) && (
 
                     <Accordion
-                        expanded={expanded === 'panelCandidatos'}
-                        onChange={handleMainChange('panelCandidatos')}
+                        expanded={expanded === 'panelUsuários'}
+                        onChange={handleMainChange('panelUsuários')}
                     >
-                        <AccordionSummary aria-controls="panelCandidatos-content" id="panelCandidatos-header">
+                        <AccordionSummary aria-controls="panelUsuários-content" id="panelUsuários-header">
                             <GroupsIcon sx={{ mr: 1 }} />
-                            <Typography component="span">Candidatos</Typography>
+                            <Typography component="span">Usuários</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             <Accordion
-                                expanded={candidatosInnerExpanded === 'panelCandidatosCasas'}
-                                onChange={handleCandidatosInnerChange('panelCandidatosCasas')}
+                                expanded={usuáriosInnerExpanded === 'panelUsuáriosCasas'}
+                                onChange={handleUsuáriosInnerChange('panelUsuáriosCasas')}
                                 // onClick={handleOpenModal}
                                 sx={{ maxWidth: '100%', mb: 0 }}
                             >
-                                <AccordionSummary aria-controls="panelCandidatosCasas-content" id="panelCandidatosCasas-header">
+                                <AccordionSummary aria-controls="panelUsuáriosCasas-content" id="panelUsuáriosCasas-header">
                                     <HouseIcon sx={{ mr: 1 }} />
                                     <Typography component="span">Casas</Typography>
                                 </AccordionSummary>
                             </Accordion>
                             <Accordion
-                                expanded={candidatosInnerExpanded === 'panelCandidatosRegras'}
-                                onChange={handleCandidatosInnerChange('panelCandidatosRegras')}
+                                expanded={usuáriosInnerExpanded === 'panelUsuáriosRegras'}
+                                onChange={handleUsuáriosInnerChange('panelUsuáriosRegras')}
                                 sx={{ maxWidth: '100%', mb: 0 }}
                             >
-                                <AccordionSummary aria-controls="panelCandidatosRegras-content" id="panelCandidatosRegras-header">
+                                <AccordionSummary aria-controls="panelUsuáriosRegras-content" id="panelUsuáriosRegras-header">
                                     <GavelIcon sx={{ mr: 1 }} />
                                     <Typography component="span">Regras</Typography>
                                 </AccordionSummary>
                             </Accordion>
                             <Accordion
-                                expanded={candidatosInnerExpanded === 'panelCandidatosQuestionario'}
-                                onChange={handleCandidatosInnerChange('panelCandidatosQuestionario')}
+                                expanded={usuáriosInnerExpanded === 'panelUsuáriosQuestionario'}
+                                onChange={handleUsuáriosInnerChange('panelUsuáriosQuestionario')}
                                 sx={{ maxWidth: '100%', mb: 0 }}
                             >
-                                <AccordionSummary aria-controls="panelCandidatosQuestionario-content" id="panelCandidatosQuestionario-header">
+                                <AccordionSummary aria-controls="panelUsuáriosQuestionario-content" id="panelUsuáriosQuestionario-header">
                                     <QuizIcon sx={{ mr: 1 }} />
                                     <Typography component="span">Questionário</Typography>
                                 </AccordionSummary>
@@ -406,9 +406,9 @@ export default function MenuLateral() {
                 open={isModalOpen}
                 onClose={handleCloseModal}
             />
-            <CollaboratorsModal
-                open={isModalOpenCollaborators}
-                onClose={handleCloseModalCollaborators}
+            <UsersModal
+                open={isModalOpenUsers}
+                onClose={handleCloseModalUsers}
             />
             <QuestionnairesModal
                 open={isModalOpenQuestionnaires}
