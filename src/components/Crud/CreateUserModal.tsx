@@ -7,6 +7,12 @@ import {
     Button,
     Alert,
     CircularProgress,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    OutlinedInput,
+    Chip,
 } from '@mui/material';
 import { createUsers } from '../services/UsersService';
 import { User } from '../../interfaces/users';
@@ -31,6 +37,8 @@ const modalStyle = {
     gap: 1,
 };
 
+const allRoles = ['ADMIN', 'MODERATOR', 'USER'];
+
 export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose, onSuccess }) => {
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
@@ -40,8 +48,8 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
         phone: '',
         cpf: '',
         cargo: '',
-        roles: ["USER"],
-        password: '123456' // Senha padrão inicial,
+        roles: ['USER'], // Inicia com o perfil padrão
+        password: '123456', // Senha padrão inicial
     });
 
     React.useEffect(() => {
@@ -52,10 +60,10 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
                 phone: '',
                 cpf: '',
                 cargo: '',
-                roles: ["USER"],
-                password: '123456' // Senha padrão inicial,
+                roles: ['USER'],
+                password: '123456',
             });
-            setError(null); // Também é uma boa prática limpar o estado de erro
+            setError(null);
         }
     }, [open]);
 
@@ -66,16 +74,27 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
         });
     };
 
+    const handleRolesChange = (e: any) => {
+        const {
+            target: { value },
+        } = e;
+        setFormData({
+            ...formData,
+            roles: typeof value === 'string' ? value.split(',') : value,
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
         try {
             const newUser = await createUsers(formData);
-            onSuccess(newUser); // Chama a função de sucesso do componente pai
-            onClose(); // Fecha a modal
-        } catch (err) {
-            setError('Falha ao criar o colaborador. Verifique os dados e tente novamente.');
+            onSuccess(newUser);
+            onClose();
+        } catch (err: any) {
+            const errorMessage = err.response?.data?.message || 'Falha ao criar o colaborador. Verifique os dados e tente novamente.';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -128,14 +147,39 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
                     required
                     size="small"
                 />
+                <FormControl fullWidth size="small">
+                    <InputLabel id="roles-label">Perfis</InputLabel>
+                    <Select
+                        labelId="roles-label"
+                        id="roles-select"
+                        multiple
+                        value={formData.roles}
+                        onChange={handleRolesChange}
+                        input={<OutlinedInput id="select-multiple-chip" label="Perfis" />}
+                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                    <Chip key={value} label={value} />
+                                ))}
+                            </Box>
+                        )}
+                    >
+                        {allRoles.map((role) => (
+                            <MenuItem key={role} value={role}>
+                                {role}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
                 <Button
                     type="submit"
                     variant="contained"
                     disabled={loading}
+                    sx={{ mt: 2 }}
                 >
                     {loading ? <CircularProgress size={24} /> : 'Salvar'}
                 </Button>
-                <Button onClick={onClose} variant="outlined">
+                <Button onClick={onClose} variant="outlined" sx={{ mt: 1 }}>
                     Cancelar
                 </Button>
             </Box>

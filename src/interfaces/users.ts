@@ -7,5 +7,5 @@ export interface User {
     cpf: string;
     cargo: string;
     roles: string[];
-    password: string; // Adicione a senha como opcional
+    password?: string; // Adicione a senha como opcional
 }

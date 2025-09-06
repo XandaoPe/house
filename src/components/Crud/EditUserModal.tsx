@@ -7,6 +7,12 @@ import {
     Button,
     Alert,
     CircularProgress,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    OutlinedInput,
+    Chip,
 } from '@mui/material';
 import { updateUsers } from '../services/UsersService';
 import { User } from '../../interfaces/users';
@@ -32,6 +38,8 @@ const modalStyle = {
     gap: 1,
 };
 
+const allRoles = ['ADMIN', 'MODERATOR', 'USER'];
+
 export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClose, onSuccess }) => {
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
@@ -39,7 +47,8 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClos
 
     React.useEffect(() => {
         if (user) {
-            setFormData(user);
+            setFormData({ ...user, roles: user.roles || ['USER'] }); // Inicializa com os papéis do usuário, com um padrão se não houver
+            setError(null);
         }
     }, [user]);
 
@@ -54,16 +63,29 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClos
         });
     };
 
+    const handleRolesChange = (e: any) => {
+        const {
+            target: { value },
+        } = e;
+        setFormData({
+            ...formData,
+            roles: typeof value === 'string' ? value.split(',') : value,
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
         try {
-            await updateUsers(formData);
-            onSuccess(formData); // Chama o callback de sucesso com os dados atualizados
-            onClose(); // Fecha a modal
-        } catch (err) {
-            setError('Falha ao atualizar o colaborador. Verifique os dados e tente novamente.');
+            if (formData) {
+                await updateUsers(formData);
+                onSuccess(formData);
+                onClose();
+            }
+        } catch (err: any) {
+            const errorMessage = err.response?.data?.message || 'Falha ao atualizar o colaborador. Verifique os dados e tente novamente.';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -93,7 +115,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClos
                     size="small"
                 />
                 <TextField
-                    label="Fone'"
+                    label="Fone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
@@ -101,7 +123,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClos
                     size="small"
                 />
                 <TextField
-                    label="CPF'"
+                    label="CPF"
                     name="cpf"
                     value={formData.cpf}
                     onChange={handleChange}
@@ -109,21 +131,46 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClos
                     size="small"
                 />
                 <TextField
-                    label="Cargo'"
+                    label="Cargo"
                     name="cargo"
                     value={formData.cargo}
                     onChange={handleChange}
                     required
                     size="small"
                 />
+                <FormControl fullWidth size="small">
+                    <InputLabel id="roles-label">Perfis</InputLabel>
+                    <Select
+                        labelId="roles-label"
+                        id="roles-select"
+                        multiple
+                        value={formData.roles}
+                        onChange={handleRolesChange}
+                        input={<OutlinedInput id="select-multiple-chip" label="Perfis" />}
+                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                    <Chip key={value} label={value} />
+                                ))}
+                            </Box>
+                        )}
+                    >
+                        {allRoles.map((role) => (
+                            <MenuItem key={role} value={role}>
+                                {role}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
                 <Button
                     type="submit"
                     variant="contained"
                     disabled={loading}
+                    sx={{ mt: 2 }}
                 >
                     {loading ? <CircularProgress size={24} /> : 'Salvar Alterações'}
                 </Button>
-                <Button onClick={onClose} variant="outlined">
+                <Button onClick={onClose} variant="outlined" sx={{ mt: 1 }}>
                     Cancelar
                 </Button>
             </Box>
