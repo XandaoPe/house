@@ -28,7 +28,6 @@ export const fetchResponsesByQuestionId = async (questionId: string): Promise<Re
 export const createResponses = async (responses: Omit<Response, '_id'>): Promise<Response> => {
 
     try {
-        console.log('responses...', responses)
         const response = await axios.post<Response>(API_URL, responses);
         return response.data;
     } catch (error) {

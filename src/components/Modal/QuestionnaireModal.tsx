@@ -17,6 +17,7 @@ import { CreateQuestionnaireModal } from '../Crud/CreateQuestionnaireModal';
 import { EditQuestionnaireModal } from '../Crud/EditQuestionnaireModal';
 import { Response } from '../../interfaces/response';
 import { CreateResponseModal } from '../Crud/CreateResponseModal';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface questionnairesModalProps {
     open: boolean;
@@ -38,6 +39,8 @@ const modalStyle = {
 };
 
 export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, onClose}) => {
+    const { hasPermission } = useAuth();
+    const canEdit = hasPermission('ADMIN');
     const [loading, setLoading] = React.useState<boolean>(false);
     const [questionnaires, setQuestionnaires] = React.useState<Questionnaire[]>([]);
     const [error, setError] = React.useState<string | null>(null);
@@ -152,6 +155,7 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
                     {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                     <Button
+                        disabled={!canEdit}
                         variant="contained"
                         startIcon={<AddIcon />}
                         sx={{ mb: 2 }}

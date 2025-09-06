@@ -19,6 +19,7 @@ import { ResponsequestionsTable } from '../tables/ResponseQuestionsTable';
 import { Questionnaire } from '../../interfaces/questionnaire';
 import { ResponsesModal } from './ResponseModal';
 import { QuestionnairesModal } from './QuestionnaireModal';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ResponsequestionsModalProps {
     open: boolean;
@@ -42,7 +43,8 @@ const modalStyle = {
 };
 
 export const ResponseQuestionsModal: React.FC<ResponsequestionsModalProps> = ({ open, onClose, responseArray }) => {
-    const [loading, setLoading] = React.useState<boolean>(false);
+    const { hasPermission } = useAuth();
+    const canEdit = hasPermission('ADMIN'); const [loading, setLoading] = React.useState<boolean>(false);
     const [responsequestions, setResponsequestions] = React.useState<Response[]>([]);
     const [questions, setQuestions] = React.useState<Questionnaire[]>([]);
     const [responsesArray, setResponsesArray] = React.useState<any>([]);
@@ -105,7 +107,6 @@ export const ResponseQuestionsModal: React.FC<ResponsequestionsModalProps> = ({ 
             sortedResponses.sort((a, b) => a.question.localeCompare(b.question));
             setQuestions(sortedQuestions);
             setResponsesArray(sortedResponses);
-            console.log('responseArray...', responsesArray)
         } catch (err) {
             setError('Não foi possível carregar os dados. Tente novamente.');
         } finally {
@@ -206,6 +207,7 @@ export const ResponseQuestionsModal: React.FC<ResponsequestionsModalProps> = ({ 
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                         <Button
+                            disabled={!canEdit}
                             variant="contained"
                             startIcon={<AddIcon />}
                             onClick={handleOpenModalResponses}

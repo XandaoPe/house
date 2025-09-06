@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, AuthContextType } from '../types/auth';
-import { authService } from '../services/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -20,19 +19,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
     useEffect(() => {
-        // Verificar se há dados de autenticação armazenados
-        const storedToken = authService.getStoredToken();
-        const storedUser = authService.getStoredUser();
+        const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
 
         if (storedToken && storedUser) {
             setToken(storedToken);
-            setUser(storedUser);
+            setUser(JSON.parse(storedUser));
         }
         setIsLoading(false);
     }, []);
+
+    const hasPermission = (requiredRole: string): boolean => {
+        if (!user) return false;
+
+        // Hierarquia de perfis (ajuste conforme suas necessidades)
+        const roleHierarchy: { [key: string]: number } = {
+            'USER': 1,
+            'MODERATOR': 2,
+            'ADMIN': 3,
+            'SUPERADMIN': 4
+        };
+
+        const userRoleLevel = roleHierarchy[user.role] || 0;
+        const requiredRoleLevel = roleHierarchy[requiredRole] || 0;
+
+        return userRoleLevel >= requiredRoleLevel;
+        
+    };
 
     const login = async (email: string, password: string): Promise<boolean> => {
         try {
@@ -47,16 +62,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             if (response.ok) {
                 const data = await response.json();
                 if (data.access_token) {
-                    const userData = {
-                        id: data.user?.id || '1',
-                        email: email,
-                        name: data.user?.name || email.split('@')[0],
+                    const userData: User = {
+                        id: data.user.id,
+                        email: data.user.email,
+                        name: data.user.name,
+                        role: data.user.roles // Incluir o role do usuário
                     };
 
                     setUser(userData);
+                    setToken(data.access_token);
                     localStorage.setItem('user', JSON.stringify(userData));
                     localStorage.setItem('token', data.access_token);
-                    return true; // Apenas retorna true, o redirecionamento será feito no componente
+                    return true;
                 }
             }
             return false;
@@ -66,14 +83,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
-    // logout também não deve redirecionar
     const logout = () => {
         setUser(null);
+        setToken(null);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        // Não redireciona aqui - o componente que chama logout deve fazer isso
     };
-
 
     const value: AuthContextType = {
         user,
@@ -81,6 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         login,
         logout,
         isLoading,
+        hasPermission // Adicionar a função ao contexto
     };
 
     return (

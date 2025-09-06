@@ -21,6 +21,7 @@ import { deleteResponses, fetchResponses } from '../services/responseService';
 import { ResponsesTable } from '../tables/ResponseTable';
 import { CreateResponseModal } from '../Crud/CreateResponseModal';
 import { fetchQuestionnaires } from '../services/QuestionnairesService';
+import { useAuth } from '../../contexts/AuthContext';
 
 // [NOVO] Importe a nova função de serviço para buscar por ID
 import { fetchResponsesByQuestionId } from '../services/responseService';
@@ -47,7 +48,8 @@ const modalStyle = {
 };
 
 export const ResponsesModal: React.FC<responsesModalProps> = ({ open, onClose, questionDescription }) => {
-    const [loading, setLoading] = React.useState<boolean>(false);
+    const { hasPermission } = useAuth();
+    const canEdit = hasPermission('ADMIN');    const [loading, setLoading] = React.useState<boolean>(false);
     const [responses, setResponses] = React.useState<Response[]>([]);
     const [questions, setQuestions] = React.useState<Questionnaire[]>([]);
     const [responsesArray, setResponsesArray] = React.useState<any>([]);
@@ -109,7 +111,6 @@ export const ResponsesModal: React.FC<responsesModalProps> = ({ open, onClose, q
             sortedResponses.sort((a, b) => a.question.localeCompare(b.question));
             setQuestions(sortedQuestions);
             setResponsesArray(sortedResponses);
-            console.log('responseArray...', responsesArray)
         } catch (err) {
             setError('Não foi possível carregar os dados. Tente novamente.');
         } finally {
@@ -252,7 +253,7 @@ export const ResponsesModal: React.FC<responsesModalProps> = ({ open, onClose, q
                             startIcon={<AddIcon />}
                             onClick={handleCreate}
                             sx={{ mb: 2 }}
-                            disabled={!selectedQuestionId}
+                            disabled={!selectedQuestionId || !canEdit} 
                         >
                             Criar Resposta
                         </Button>

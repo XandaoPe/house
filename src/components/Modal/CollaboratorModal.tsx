@@ -15,6 +15,7 @@ import { deleteCollaborators, fetchCollaborators } from '../services/Collaborato
 import { CollaboratorsTable } from '../tables/CollaboratorsTable';
 import { CreateCollaboratorModal } from '../Crud/CreateCollaboratorModal';
 import { EditCollaboratorModal } from '../Crud/EditCollaboratorsModal';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface collaboratorsModalProps {
     open: boolean;
@@ -36,6 +37,8 @@ const modalStyle = {
 };
 
 export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, onClose }) => {
+    const { hasPermission } = useAuth();
+    const canEdit = hasPermission('ADMIN');
     const [loading, setLoading] = React.useState<boolean>(false);
     const [collaborators, setCollaborators] = React.useState<Collaborator[]>([]);
     const [error, setError] = React.useState<string | null>(null);
@@ -138,6 +141,7 @@ export const CollaboratorsModal: React.FC<collaboratorsModalProps> = ({ open, on
                     {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                     <Button
+                        disabled={!canEdit}
                         variant="contained"
                         startIcon={<AddIcon />}
                         sx={{ mb: 2 }}

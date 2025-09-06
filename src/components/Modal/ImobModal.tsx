@@ -15,6 +15,7 @@ import { deleteImovel, fetchImoveis } from '../services/imovesService';
 import { ImoveisTable } from '../tables/ImoveisTable';
 import { CreateImovelModal } from '../Crud/CreateImovelModal';
 import { EditImovelModal } from '../Crud/EditImovelModal';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ImoveisModalProps {
     open: boolean;
@@ -37,6 +38,8 @@ const modalStyle = {
 };
 
 export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => {
+    const { hasPermission } = useAuth();
+    const canEdit = hasPermission('ADMIN');
     const [loading, setLoading] = React.useState<boolean>(false);
     const [imoveis, setImoveis] = React.useState<Imovel[]>([]);
     const [error, setError] = React.useState<string | null>(null);
@@ -141,6 +144,7 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
                     {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                     <Button
+                        disabled={!canEdit}
                         variant="contained"
                         startIcon={<AddIcon />}
                         sx={{ mb: 2 }}
