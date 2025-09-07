@@ -14,6 +14,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Response } from '../../interfaces/response';
+import { tableCellSx, tableContainerSx } from '../../styles/styles';
 
 interface responsesTableProps {
     responses: Response[];
@@ -31,21 +32,21 @@ export const ResponsesTable: React.FC<responsesTableProps> = ({ responses, onDel
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={tableContainerSx}>
             <Table aria-label="tabela de respostas" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{py:0.2}}>Pergunta</TableCell>
-                        <TableCell sx={{py:0.2}}>Resposta</TableCell>
-                        <TableCell align="right" sx={{py:0.2}}>Ações</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Pergunta</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Resposta</TableCell>
+                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {responses.map((response) => (
                         <TableRow key={response._id}>
-                            <TableCell sx={{py:0.2}}>{response.id_question.question}</TableCell>
-                            <TableCell sx={{py:0.2}}>{response.questionresponse}</TableCell>
-                            <TableCell align="right" sx={{py:0.2}}>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{response.id_question.question}</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{response.questionresponse}</TableCell>
+                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>
                                 <ButtonGroup variant="contained" aria-label="Ações de Imóvel">
                                     <Button
                                         color="primary"

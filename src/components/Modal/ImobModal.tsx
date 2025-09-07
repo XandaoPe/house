@@ -16,6 +16,7 @@ import { ImoveisTable } from '../tables/ImoveisTable';
 import { CreateImovelModal } from '../Crud/CreateImovelModal';
 import { EditImovelModal } from '../Crud/EditImovelModal';
 import { useAuth } from '../../contexts/AuthContext';
+import { styleModal } from '../../styles/styles';
 
 interface ImoveisModalProps {
     open: boolean;
@@ -125,7 +126,7 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
     return (
         <>
             <Modal open={open} onClose={onClose}>
-                <Box sx={modalStyle}>
+                <Box sx={styleModal}>
                     <IconButton
                         aria-label="close"
                         onClick={onClose}
@@ -136,7 +137,9 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
                             color: (theme) => theme.palette.grey[900],
                         }}
                     >
-                        <CloseIcon />
+                        <CloseIcon
+                            sx={{ color: 'red' }}
+                        />
                     </IconButton>
                     <Typography variant="h6" component="h2" mb={2}>
                         Lista de Imóveis IMOB
@@ -162,9 +165,15 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
                         <ImoveisTable imoveis={imoveis} onEdit={handleEdit} onDelete={handleDelete} />
                     )}
 
-                    <Button onClick={onClose} sx={{ mt: 2 }}>
+                    <Button
+                        onClick={onClose}
+                        variant="contained" // Adicionei 'contained' para dar um fundo vermelho
+                        color="error" // Propriedade que define a cor para vermelho do tema
+                        sx={{ mt: 2 }}
+                    >
                         Fechar
                     </Button>
+
                 </Box>
             </Modal>
             <CreateImovelModal

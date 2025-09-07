@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { primaryButtonSx, styleModal, textFieldSx } from '../styles/styles';
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -32,7 +33,7 @@ const LoginForm: React.FC = () => {
                 setError('Credenciais inválidas. Por favor, tente novamente.');
             }
         } catch (err) {
-            setError('Ocorreu um erro durante o login. Tente novamente.');
+            setError('Ocorreu um erro durante o login. Tente novamente !');
         } finally {
             setIsLoading(false);
         }
@@ -42,13 +43,19 @@ const LoginForm: React.FC = () => {
         <Container component="main" maxWidth="xs">
             <Box
                 sx={{
-                    marginTop: 8,
+                    marginTop: 7,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}
             >
-                <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
+                <Paper elevation={3} sx={{
+                    ...styleModal,
+                    padding: 4,
+                    width: '30%',
+                    borderRadius: 10,
+                    border: '2px solid #4a4b4b7e'
+                }}>
                     <Typography component="h1" variant="h5" align="center" gutterBottom>
                         Login
                     </Typography>
@@ -61,6 +68,7 @@ const LoginForm: React.FC = () => {
 
                     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <TextField
+                            sx={textFieldSx}
                             margin="normal"
                             required
                             fullWidth
@@ -73,6 +81,7 @@ const LoginForm: React.FC = () => {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
+                            sx={textFieldSx}
                             margin="normal"
                             required
                             fullWidth
@@ -88,7 +97,7 @@ const LoginForm: React.FC = () => {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
+                            sx={{ ...primaryButtonSx, mt: 3, mb: 2 }}
                             disabled={isLoading}
                         >
                             {isLoading ? 'Entrando...' : 'Entrar'}

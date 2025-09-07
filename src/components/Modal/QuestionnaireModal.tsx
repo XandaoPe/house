@@ -18,25 +18,12 @@ import { EditQuestionnaireModal } from '../Crud/EditQuestionnaireModal';
 import { Response } from '../../interfaces/response';
 import { CreateResponseModal } from '../Crud/CreateResponseModal';
 import { useAuth } from '../../contexts/AuthContext';
+import { styleModal } from '../../styles/styles';
 
 interface questionnairesModalProps {
     open: boolean;
     onClose: () => void;
 }
-
-const modalStyle = {
-    position: 'relative',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: { xs: 350, sm: 600, md: 900, lg: 1200 },
-    maxHeight: '90vh',
-    overflowY: 'auto',
-    bgcolor: '#e1d9d9f5',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
 
 export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, onClose}) => {
     const { hasPermission } = useAuth();
@@ -136,7 +123,7 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
     return (
         <>
             <Modal open={open} onClose={onClose}>
-                <Box sx={modalStyle}>
+                <Box sx={styleModal}>
                     <IconButton
                         aria-label="close"
                         onClick={onClose}
@@ -147,8 +134,9 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
                             color: (theme) => theme.palette.grey[900],
                         }}
                     >
-                        <CloseIcon />
-                    </IconButton>
+                        <CloseIcon
+                            sx={{ color: 'red' }}
+                        />                    </IconButton>
                     <Typography variant="h6" component="h2" mb={2}>
                         Lista de Questionários IMOB
                     </Typography>
@@ -185,9 +173,15 @@ export const QuestionnairesModal: React.FC<questionnairesModalProps> = ({ open, 
                         responseHandler={{ setQuestionId, handleResponse }}                        
                     />
 
-                    <Button onClick={onClose} sx={{ mt: 2 }}>
+                    <Button
+                        onClick={onClose}
+                        variant="contained" // Adicionei 'contained' para dar um fundo vermelho
+                        color="error" // Propriedade que define a cor para vermelho do tema
+                        sx={{ mt: 2 }}
+                    >
                         Fechar
                     </Button>
+
                 </Box>
             </Modal>
             <CreateQuestionnaireModal

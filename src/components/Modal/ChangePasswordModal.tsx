@@ -13,24 +13,12 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
+import { primaryButtonSx, styleModal, textFieldSx } from '../../styles/styles';
 
 interface ChangePasswordModalProps {
     open: boolean;
     onClose: () => void;
 }
-
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    borderRadius: '8px'
-};
 
 export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ open, onClose }) => {
     const { user } = useAuth();
@@ -91,10 +79,12 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ open, 
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box sx={style}>
+            <Box sx={{ ...styleModal, width: 400 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <IconButton onClick={handleClose}>
-                        <CloseIcon />
+                        <CloseIcon
+                            sx={{ color: 'red' }}
+                        />
                     </IconButton>
                 </Box>
                 <Typography id="modal-modal-title" variant="h6" component="h2" mb={2}>
@@ -111,6 +101,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ open, 
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
                         required
+                        sx={textFieldSx}
                     />
                     <TextField
                         label="Nova Senha"
@@ -120,6 +111,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ open, 
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
+                        sx={textFieldSx}
                     />
                     <TextField
                         label="Confirmar Nova Senha"
@@ -129,13 +121,14 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ open, 
                         value={confirmNewPassword}
                         onChange={(e) => setConfirmNewPassword(e.target.value)}
                         required
+                        sx={textFieldSx}
                     />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{ mt: 2 }}
                         disabled={loading}
+                        sx={primaryButtonSx}
                     >
                         {loading ? <CircularProgress size={24} /> : 'Alterar Senha'}
                     </Button>

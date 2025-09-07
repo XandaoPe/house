@@ -14,6 +14,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Imovel } from '../../interfaces/Imovel';
+import { tableCellSx, tableContainerSx } from '../../styles/styles';
 
 interface ImoveisTableProps {
     imoveis: Imovel[];
@@ -25,36 +26,36 @@ interface ImoveisTableProps {
 export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, onEdit }) => {
     if (imoveis.length === 0) {
         return (
-            <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+            <Typography variant="body1" align="center" sx={{ mt: 2, color: 'white' }}>
                 Nenhum imóvel encontrado.
             </Typography>
         );
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={tableContainerSx}>
             <Table aria-label="tabela de imóveis" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{py:0.2}}>Tipo</TableCell>
-                        <TableCell sx={{py:0.2}}>Endereço</TableCell>
-                        <TableCell sx={{py:0.2}}>Cidade</TableCell>
-                        <TableCell sx={{py:0.2}}>UF</TableCell>
-                        <TableCell sx={{py:0.2}}>Valor</TableCell>
-                        <TableCell sx={{py:0.2}}>Descrição</TableCell>
-                        <TableCell align="right" sx={{ py: 0.2 }}>Ações</TableCell>
+                        <TableCell sx={tableCellSx}>Tipo</TableCell>
+                        <TableCell sx={tableCellSx}>Endereço</TableCell>
+                        <TableCell sx={tableCellSx}>Cidade</TableCell>
+                        <TableCell sx={tableCellSx}>UF</TableCell>
+                        <TableCell sx={tableCellSx}>Valor</TableCell>
+                        <TableCell sx={tableCellSx}>Descrição</TableCell>
+                        <TableCell align="right" sx={tableCellSx}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {imoveis.map((imovel) => (
-                        <TableRow key={imovel._id}>
-                            <TableCell sx={{py:0.2}}>{imovel.tipo}</TableCell>
-                            <TableCell sx={{py:0.2}}>{imovel.endereco}</TableCell>
-                            <TableCell sx={{py:0.2}}>{imovel.cidade}</TableCell>
-                            <TableCell sx={{py:0.2}}>{imovel.uf}</TableCell>
-                            <TableCell sx={{py:0.2}}>{imovel.valor}</TableCell>
-                            <TableCell sx={{py:0.2}}>{imovel.descricao}</TableCell>
-                            <TableCell align="right" sx={{ py: 0.2 }}>
+                        <TableRow key={imovel._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                            <TableCell sx={tableCellSx}>{imovel.tipo}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.endereco}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.cidade}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.uf}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.valor}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.descricao}</TableCell>
+                            <TableCell align="right" sx={tableCellSx}>
                                 <ButtonGroup variant="contained" aria-label="Ações de Imóvel">
                                     <Button
                                         color="primary"

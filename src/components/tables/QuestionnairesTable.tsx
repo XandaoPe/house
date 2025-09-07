@@ -15,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Questionnaire } from '../../interfaces/questionnaire';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import { tableCellSx, tableContainerSx } from '../../styles/styles';
 interface questionnairesTableProps {
     questionnaires: Questionnaire[];
     onEdit: (questionnaire: Questionnaire) => void;
@@ -37,19 +38,19 @@ export const QuestionnairesTable: React.FC<questionnairesTableProps> = ({ questi
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={tableContainerSx}>
             <Table aria-label="tabela de Questões" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ py: 0.2 }}>Pergunta</TableCell>
-                        <TableCell align="right" sx={{ py: 0.2 }}>Ações</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Pergunta</TableCell>
+                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {questionnaires.map((questionnaire) => (
                         <TableRow key={questionnaire._id}>
-                            <TableCell sx={{ py: 0.2 }}>{questionnaire.question}</TableCell>
-                            <TableCell align="right" sx={{ py: 0.2 }}>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{questionnaire.question}</TableCell>
+                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>
                                 <ButtonGroup variant="contained" aria-label="Ações de Questões">
                                     <Button
                                         color="primary"

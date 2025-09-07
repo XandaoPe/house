@@ -14,6 +14,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { User } from '../../interfaces/users';
+import { tableCellSx, tableContainerSx } from '../../styles/styles';
 
 interface usersTableProps {
     users: User[];
@@ -31,27 +32,27 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={tableContainerSx}>
             <Table aria-label="tabela de Usuários" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{py:0.2}}>Nome</TableCell>
-                        <TableCell sx={{py:0.2}}>Email</TableCell>
-                        <TableCell sx={{py:0.2}}>Fone</TableCell>
-                        <TableCell sx={{py:0.2}}>CPF</TableCell>
-                        <TableCell sx={{py:0.2}}>Cargo</TableCell>
-                        <TableCell align="right" sx={{py:0.2}}>Ações</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Nome</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Email</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Fone</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>CPF</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Cargo</TableCell>
+                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {users.map((user) => (
                         <TableRow key={user._id}>
-                            <TableCell sx={{py:0.2}}>{user.name}</TableCell>
-                            <TableCell sx={{py:0.2}}>{user.email}</TableCell>
-                            <TableCell sx={{py:0.2}}>{user.phone}</TableCell>
-                            <TableCell sx={{py:0.2}}>{user.cpf}</TableCell>
-                            <TableCell sx={{py:0.2}}>{user.cargo}</TableCell>
-                            <TableCell align="right" sx={{py:0.2}}>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.name}</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.email}</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.phone}</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.cpf}</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.cargo}</TableCell>
+                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>
                                 <ButtonGroup variant="contained" aria-label="Ações de Imóvel">
                                     <Button
                                         color="primary"

@@ -16,6 +16,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Response } from '../../interfaces/response';
 import { QuestionnairesModal } from '../Modal/QuestionnaireModal';
+import { tableCellSx, tableContainerSx } from '../../styles/styles';
 
 interface ResponsequestionsTableProps {
     responsequestions: {
@@ -37,20 +38,20 @@ export const ResponsequestionsTable: React.FC<ResponsequestionsTableProps> = ({ 
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={tableContainerSx}>
             <Table aria-label="tabela de Questões e Respostas" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ py: 0.2 }}>Questão</TableCell>
-                        <TableCell sx={{ py: 0.2 }}>Respostas</TableCell>
-                        {/* <TableCell align="right" sx={{ py: 0.2 }}>Ações</TableCell> */}
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Questão</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Respostas</TableCell>
+                        {/* <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>Ações</TableCell> */}
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {responsequestions.map((item, index) => (
                         <TableRow key={index}>
-                            <TableCell sx={{ py: 0.2 }}>{item.question}</TableCell>
-                            <TableCell sx={{ py: 0.2 }}>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{item.question}</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2 }}>
                                 <ul>
                                     {item.response.map(res => (
                                         <li key={res.id_response}>
