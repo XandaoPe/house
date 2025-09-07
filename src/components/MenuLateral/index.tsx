@@ -1,4 +1,4 @@
-// MenuLateral.tsx - ADICIONE ESTES IMPORTS
+// MenuLateral.tsx - CÓDIGO ATUALIZADO
 import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -15,7 +15,10 @@ import {
     AppBar,
     Toolbar,
     IconButton,
-    Avatar
+    Avatar,
+    ListItemButton, // Importe o ListItemButton
+    ListItemIcon, // Importe o ListItemIcon
+    ListItemText // Importe o ListItemText
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HouseIcon from '@mui/icons-material/House';
@@ -33,7 +36,7 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { ChangePasswordModal } from '../Modal/ChangePasswordModal'; // Importe o novo modal
+import { ChangePasswordModal } from '../Modal/ChangePasswordModal';
 import KeyIcon from '@mui/icons-material/Key';
 
 const drawerWidth = 300;
@@ -88,7 +91,7 @@ export default function MenuLateral() {
     const [isModalOpenUsers, setIsModalOpenUsers] = React.useState<boolean>(false);
     const [isModalOpenQuestionnaires, setIsModalOpenQuestionnaires] = React.useState<boolean>(false);
     const [isModalOpenQuestionsResponses, setIsModalOpenQuestionsResponses] = React.useState<boolean>(false);
-    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false); // NOVO ESTADO
+    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false);
     const [innerExpanded, setInnerExpanded] = React.useState<string | false>(false);
     const [usuáriosInnerExpanded, setUsuáriosInnerExpanded] = React.useState<string | false>(false);
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -169,38 +172,58 @@ export default function MenuLateral() {
                 </IconButton>
             </Box>
 
-            {/* Informações do usuário */}
+            {/* Informações do usuário e botão de senha */}
             <Box sx={{
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: 'column', // Adicione essa linha
                 marginBottom: '20px',
                 padding: '10px',
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 borderRadius: '4px'
             }}>
-                <Avatar sx={{
-                    width: 40,
-                    height: 40,
-                    bgcolor: 'secondary.main',
-                    marginRight: '10px'
-                }}>
-                    {user?.name?.charAt(0).toUpperCase() || 'U'}
-                </Avatar>
-                <Box>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                        {user?.name || 'Usuário'}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                        {user?.email}
-                    </Typography>
-                    <Typography variant="caption" sx={{
-                        display: 'block',
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        textTransform: 'capitalize'
+                <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <Avatar sx={{
+                        width: 40,
+                        height: 40,
+                        bgcolor: 'secondary.main',
+                        marginRight: '10px'
                     }}>
-                        Perfil: {user?.role}
-                    </Typography>
+                        {user?.name?.charAt(0).toUpperCase() || 'U'}
+                    </Avatar>
+                    <Box>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                            {user?.name || 'Usuário'}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                            {user?.email}
+                        </Typography>
+                        <Typography variant="caption" sx={{
+                            display: 'block',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            textTransform: 'capitalize'
+                        }}>
+                            Perfil: {user?.role}
+                        </Typography>
+                    </Box>
                 </Box>
+                <ListItemButton
+                    onClick={handleOpenChangePasswordModal}
+                    sx={{
+                        color: 'white',
+                        padding: '5px 5px',
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '4px'
+                        },
+                        display: 'flex',
+                        justifyContent: 'flex-start'
+                    }}
+                >
+                    <ListItemIcon sx={{ minWidth: '20px' }}>
+                        <KeyIcon sx={{ color: 'white' }} />
+                    </ListItemIcon>
+                    <ListItemText primary="Alterar Senha" sx={{ '& .MuiTypography-root': { fontWeight: 'bold', marginLeft: '10px' } }} />
+                </ListItemButton>
             </Box>
 
             {/* Conteúdo do Menu */}
@@ -348,17 +371,6 @@ export default function MenuLateral() {
                     </Accordion>
                 )}
 
-                <Accordion
-                    expanded={expanded === 'panelPassword'}
-                    onChange={handleMainChange('panelPassword')}
-                    onClick={handleOpenChangePasswordModal} // Aciona o modal ao clicar
-                >
-                    <AccordionSummary aria-controls="panelPassword-content" id="panelPassword-header">
-                        <KeyIcon sx={{ mr: 1 }} />
-                        <Typography component="span">Alterar Senha</Typography>
-                    </AccordionSummary>
-                </Accordion>
-
             </Box>
         </Box>
     );
@@ -438,7 +450,6 @@ export default function MenuLateral() {
                 open={isChangePasswordModalOpen}
                 onClose={handleCloseChangePasswordModal}
             />
-
         </>
     );
 }
