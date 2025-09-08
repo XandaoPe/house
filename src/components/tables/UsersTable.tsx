@@ -25,26 +25,70 @@ interface usersTableProps {
     onDelete: (user: User) => void;
 }
 
+// Estilo para o texto destacado
+const highlightStyle = {
+    backgroundColor: 'beige',
+    color: 'black',
+    fontWeight: 'bold',
+};
+
+// Função auxiliar para destacar o texto
+const highlightText = (text: string, highlight: string) => {
+    if (!highlight) {
+        return text;
+    }
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return (
+        <span>
+            {parts.map((part, i) =>
+                part.toLowerCase() === highlight.toLowerCase() ? (
+                    <span key={i} style={highlightStyle}>
+                        {part}
+                    </span>
+                ) : (
+                    part
+                )
+            )}
+        </span>
+    );
+};
+
 export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [highlightedColumns, setHighlightedColumns] = useState<string[]>([]);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
     const sortedAndFilteredUsers = useMemo(() => {
-        // Primeiro, cria uma cópia do array de usuários para não modificar o original
         let sortedUsers = [...users];
-
-        // Ordena a lista de usuários por nome
         sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
 
-        // Em seguida, aplica o filtro, se houver um termo de pesquisa
         if (!searchTerm) {
+            setHighlightedColumns([]);
             return sortedUsers;
         }
 
         const lowercasedSearchTerm = searchTerm.toLowerCase();
+
+        const matchedColumns: string[] = [];
+        if (users.some(user => user.name.toLowerCase().includes(lowercasedSearchTerm))) {
+            matchedColumns.push('name');
+        }
+        if (users.some(user => user.email.toLowerCase().includes(lowercasedSearchTerm))) {
+            matchedColumns.push('email');
+        }
+        if (users.some(user => user.phone.toLowerCase().includes(lowercasedSearchTerm))) {
+            matchedColumns.push('phone');
+        }
+        if (users.some(user => user.cpf.toLowerCase().includes(lowercasedSearchTerm))) {
+            matchedColumns.push('cpf');
+        }
+        if (users.some(user => user.cargo.toLowerCase().includes(lowercasedSearchTerm))) {
+            matchedColumns.push('cargo');
+        }
+        setHighlightedColumns(matchedColumns);
 
         return sortedUsers.filter(user => {
             const searchableText = `${user.name} ${user.email} ${user.phone} ${user.cpf} ${user.cargo}`.toLowerCase();
@@ -111,22 +155,64 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
                 <Table stickyHeader aria-label="tabela de Usuários" size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Nome</TableCell>
-                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Email</TableCell>
-                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Fone</TableCell>
-                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>CPF</TableCell>
-                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Cargo</TableCell>
-                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Ações</TableCell>
+                            <TableCell
+                                sx={{
+                                    ...tableCellSx,
+                                    py: 0.2,
+                                    backgroundColor: highlightedColumns.includes('name') ? 'beige' : '#1e1e1e',
+                                    color: highlightedColumns.includes('name') ? 'black' : 'white',
+                                }}>
+                                Nome
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    ...tableCellSx,
+                                    py: 0.2,
+                                    backgroundColor: highlightedColumns.includes('email') ? 'beige' : '#1e1e1e',
+                                    color: highlightedColumns.includes('email') ? 'black' : 'white',
+                                }}>
+                                Email
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    ...tableCellSx,
+                                    py: 0.2,
+                                    backgroundColor: highlightedColumns.includes('phone') ? 'beige' : '#1e1e1e',
+                                    color: highlightedColumns.includes('phone') ? 'black' : 'white',
+                                }}>
+                                Fone
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    ...tableCellSx,
+                                    py: 0.2,
+                                    backgroundColor: highlightedColumns.includes('cpf') ? 'beige' : '#1e1e1e',
+                                    color: highlightedColumns.includes('cpf') ? 'black' : 'white',
+                                }}>
+                                CPF
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    ...tableCellSx,
+                                    py: 0.2,
+                                    backgroundColor: highlightedColumns.includes('cargo') ? 'beige' : '#1e1e1e',
+                                    color: highlightedColumns.includes('cargo') ? 'black' : 'white',
+                                }}>
+                                Cargo
+                            </TableCell>
+                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>
+                                Ações
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {sortedAndFilteredUsers.map((user) => (
                             <TableRow key={user._id}>
-                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.name}</TableCell>
-                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.email}</TableCell>
-                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.phone}</TableCell>
-                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.cpf}</TableCell>
-                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{user.cargo}</TableCell>
+                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.name, searchTerm)}</TableCell>
+                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.email, searchTerm)}</TableCell>
+                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.phone, searchTerm)}</TableCell>
+                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.cpf, searchTerm)}</TableCell>
+                                <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.cargo, searchTerm)}</TableCell>
                                 <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>
                                     <ButtonGroup variant="contained" aria-label="Ações de Usuário">
                                         <Button
