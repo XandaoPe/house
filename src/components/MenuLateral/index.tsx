@@ -160,15 +160,22 @@ export default function MenuLateral() {
                 padding: '10px',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.12)'
             }}>
-                <Typography variant="h6" component="div">
-                    Sistema
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', color: '#89efa1ec', fontWeight: 'bold' }}>
+                    <img
+                        src="house.png" // <<<< ATENÇÃO: SUBSTITUA ESTE CAMINHO/URL
+                        alt="Logo do Sistema - Casa Moderna"
+                        style={{ width: '50px', height: 'auto', marginRight: '10px', borderRadius: '4px' }}
+                    />
+                    <Typography variant="h6" component="div">
+                        Sistema Casas
+                    </Typography>
+                </Box>
                 <IconButton
                     color="inherit"
                     onClick={handleLogout}
                     title="Sair"
                 >
-                    <LogoutIcon />
+                    <LogoutIcon sx={{ color: '#efae89eb' }}/>
                 </IconButton>
             </Box>
 

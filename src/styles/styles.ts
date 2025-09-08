@@ -40,7 +40,7 @@ export const styleModal = {
     bgcolor: 'rgba(0, 0, 0, 0.8)', // Fundo preto com 70% de opacidade
     color: 'white', // Cor das fontes em branco
     border: '2px solid #fff', // Borda branca
-    boxShadow: 24,
+    boxShadow: '0px 0px 30px 10px rgba(192, 192, 192, 0.7)', 
     p: 4,
     borderRadius: '8px',
 };
@@ -57,4 +57,22 @@ export const tableCellSx = {
     py: 0.2,
     color: 'white',
     borderColor: 'rgba(255, 255, 255, 0.2)', // Borda clara e sutil
+};
+
+// Exemplo: tableStyles.ts
+
+export const scrollableTableContainer = {
+    maxHeight: '300px',
+    overflowY: 'auto',
+    // Estilos personalizados da barra de rolagem para navegadores WebKit
+    '&::-webkit-scrollbar': {
+        width: '8px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    },
 };

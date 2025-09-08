@@ -125,7 +125,7 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
                         />
                     </IconButton>
                     <Typography variant="h6" component="h2" mb={2}>
-                        Lista de Colaboradores IMOB
+                        Lista de Usuários Casas
                     </Typography>
                     {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -136,7 +136,7 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
                         sx={{ mb: 2 }}
                         onClick={handleCreate}
                     >
-                        Criar Novo Colaborador
+                        Criar Novo Usuário
                     </Button>
                     {loading && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>

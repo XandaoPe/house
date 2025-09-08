@@ -14,7 +14,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { User } from '../../interfaces/users';
-import { tableCellSx, tableContainerSx } from '../../styles/styles';
+import { scrollableTableContainer, tableCellSx, tableContainerSx } from '../../styles/styles';
 
 interface usersTableProps {
     users: User[];
@@ -26,22 +26,22 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
     if (users.length === 0) {
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-                Nenhum colaborador encontrado.
+                Nenhum usuário encontrado.
             </Typography>
         );
     }
 
     return (
-        <TableContainer component={Paper} sx={tableContainerSx}>
-            <Table aria-label="tabela de Usuários" size="small">
+        <TableContainer component={Paper} sx={{ ...tableContainerSx, ...scrollableTableContainer }}>
+            <Table stickyHeader aria-label="tabela de Usuários" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Nome</TableCell>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Email</TableCell>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Fone</TableCell>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>CPF</TableCell>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Cargo</TableCell>
-                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>Ações</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Nome</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Email</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Fone</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>CPF</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Cargo</TableCell>
+                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

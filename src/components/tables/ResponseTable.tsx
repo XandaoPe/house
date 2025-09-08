@@ -14,7 +14,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Response } from '../../interfaces/response';
-import { tableCellSx, tableContainerSx } from '../../styles/styles';
+import { scrollableTableContainer, tableCellSx, tableContainerSx } from '../../styles/styles';
 
 interface responsesTableProps {
     responses: Response[];
@@ -32,13 +32,13 @@ export const ResponsesTable: React.FC<responsesTableProps> = ({ responses, onDel
     }
 
     return (
-        <TableContainer component={Paper} sx={tableContainerSx}>
-            <Table aria-label="tabela de respostas" size="small">
+        <TableContainer component={Paper} sx={{ ...tableContainerSx, ...scrollableTableContainer }}>
+            <Table stickyHeader aria-label="tabela de respostas" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Pergunta</TableCell>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Resposta</TableCell>
-                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>Ações</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Pergunta</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Resposta</TableCell>
+                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

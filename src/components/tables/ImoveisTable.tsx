@@ -14,7 +14,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Imovel } from '../../interfaces/Imovel';
-import { tableCellSx, tableContainerSx } from '../../styles/styles';
+import { scrollableTableContainer, tableCellSx, tableContainerSx } from '../../styles/styles';
 
 interface ImoveisTableProps {
     imoveis: Imovel[];
@@ -33,17 +33,17 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
     }
 
     return (
-        <TableContainer component={Paper} sx={tableContainerSx}>
-            <Table aria-label="tabela de imóveis" size="small">
+        <TableContainer component={Paper} sx={{...tableContainerSx, ...scrollableTableContainer}}>
+            <Table stickyHeader aria-label="tabela de imóveis" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={tableCellSx}>Tipo</TableCell>
-                        <TableCell sx={tableCellSx}>Endereço</TableCell>
-                        <TableCell sx={tableCellSx}>Cidade</TableCell>
-                        <TableCell sx={tableCellSx}>UF</TableCell>
-                        <TableCell sx={tableCellSx}>Valor</TableCell>
-                        <TableCell sx={tableCellSx}>Descrição</TableCell>
-                        <TableCell align="right" sx={tableCellSx}>Ações</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Tipo</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Endereço</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Cidade</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>UF</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Valor</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Descrição</TableCell>
+                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

@@ -15,7 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Questionnaire } from '../../interfaces/questionnaire';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import { tableCellSx, tableContainerSx } from '../../styles/styles';
+import { scrollableTableContainer, tableCellSx, tableContainerSx } from '../../styles/styles';
 interface questionnairesTableProps {
     questionnaires: Questionnaire[];
     onEdit: (questionnaire: Questionnaire) => void;
@@ -38,12 +38,12 @@ export const QuestionnairesTable: React.FC<questionnairesTableProps> = ({ questi
     }
 
     return (
-        <TableContainer component={Paper} sx={tableContainerSx}>
-            <Table aria-label="tabela de Questões" size="small">
+        <TableContainer component={Paper} sx={{ ...tableContainerSx, ...scrollableTableContainer }}>
+            <Table stickyHeader aria-label="tabela de Questões" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2 }}>Pergunta</TableCell>
-                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>Ações</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Pergunta</TableCell>
+                        <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
