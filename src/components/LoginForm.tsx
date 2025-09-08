@@ -68,7 +68,7 @@ const LoginForm: React.FC = () => {
 
                     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <TextField
-                            sx={textFieldSx}
+                            sx={{...textFieldSx}}
                             margin="normal"
                             required
                             fullWidth

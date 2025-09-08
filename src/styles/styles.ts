@@ -2,13 +2,37 @@
 import { SxProps, Theme } from '@mui/material';
 
 export const textFieldSx: SxProps<Theme> = {
-    input: { color: 'white' }, // Cor do texto digitado
-    label: { color: 'gray' }, // A cor do rótulo 'gray' original pode dificultar a leitura. 'white' é um contraste melhor.
+    input: {
+        color: 'white',
+        // --- Adicione estes estilos para corrigir o autocompletar ---
+        '&:-webkit-autofill': {
+            WebkitBoxShadow: '0 0 0 1000px #1e1e1e inset', // Cor de fundo do input (mesma do seu Paper)
+            WebkitTextFillColor: 'white', // Cor do texto
+            caretColor: 'white', // Cor do cursor
+            transition: 'background-color 5000s ease-in-out 0s', // Transição para evitar mudança de cor brusca
+        },
+    },
+    label: {
+        color: 'gray',
+        '&.Mui-focused': {
+            color: 'white',
+        },
+    },
     '& .MuiOutlinedInput-root': {
-        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.5)' }, // Borda mais visível
-        '&:hover fieldset': { borderColor: 'white' }, // Borda ao passar o mouse
-        '&.Mui-focused fieldset': { borderColor: 'white' }, // Borda ao focar
-    }
+        '& fieldset': {
+            borderColor: 'rgba(255, 255, 255, 0.5)',
+        },
+        '&:hover fieldset': {
+            borderColor: 'white',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: 'white',
+        },
+        // --- Adicione este para garantir que a borda fique branca no autocompletar ---
+        '&:-webkit-autofill:focus fieldset': {
+            borderColor: 'white',
+        },
+    },
 };
 
 export const primaryButtonSx: SxProps<Theme> = {
