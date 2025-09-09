@@ -27,7 +27,7 @@ interface usersTableProps {
 
 // Estilo para o texto destacado
 const highlightStyle = {
-    backgroundColor: 'beige',
+    backgroundColor: '#ADD8E6',
     color: 'black',
     fontWeight: 'bold',
 };
@@ -154,13 +154,19 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
             <TableContainer component={Paper} sx={{ ...tableContainerSx, ...scrollableTableContainer }}>
                 <Table stickyHeader aria-label="tabela de Usuários" size="small">
                     <TableHead>
-                        <TableRow>
+                        <TableRow
+                            sx={{
+                                ...tableCellSx,
+                                py: 0.2,
+                                backgroundColor: 'gray',
+                                color: 'black',
+                            }}>
                             <TableCell
                                 sx={{
                                     ...tableCellSx,
                                     py: 0.2,
-                                    backgroundColor: highlightedColumns.includes('name') ? 'beige' : '#1e1e1e',
-                                    color: highlightedColumns.includes('name') ? 'black' : 'white',
+                                    backgroundColor: 'gray',
+                                    color: 'black',
                                 }}>
                                 Nome
                             </TableCell>
@@ -168,8 +174,8 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
                                 sx={{
                                     ...tableCellSx,
                                     py: 0.2,
-                                    backgroundColor: highlightedColumns.includes('email') ? 'beige' : '#1e1e1e',
-                                    color: highlightedColumns.includes('email') ? 'black' : 'white',
+                                    backgroundColor: 'gray',
+                                    color: 'black',
                                 }}>
                                 Email
                             </TableCell>
@@ -177,8 +183,8 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
                                 sx={{
                                     ...tableCellSx,
                                     py: 0.2,
-                                    backgroundColor: highlightedColumns.includes('phone') ? 'beige' : '#1e1e1e',
-                                    color: highlightedColumns.includes('phone') ? 'black' : 'white',
+                                    backgroundColor: 'gray',
+                                    color: 'black',
                                 }}>
                                 Fone
                             </TableCell>
@@ -186,8 +192,8 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
                                 sx={{
                                     ...tableCellSx,
                                     py: 0.2,
-                                    backgroundColor: highlightedColumns.includes('cpf') ? 'beige' : '#1e1e1e',
-                                    color: highlightedColumns.includes('cpf') ? 'black' : 'white',
+                                    backgroundColor: 'gray',
+                                    color: 'black',
                                 }}>
                                 CPF
                             </TableCell>
@@ -195,12 +201,18 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
                                 sx={{
                                     ...tableCellSx,
                                     py: 0.2,
-                                    backgroundColor: highlightedColumns.includes('cargo') ? 'beige' : '#1e1e1e',
-                                    color: highlightedColumns.includes('cargo') ? 'black' : 'white',
+                                    backgroundColor: 'gray',
+                                    color: 'black',
                                 }}>
                                 Cargo
                             </TableCell>
-                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>
+                            <TableCell align="right"
+                                sx={{
+                                    ...tableCellSx,
+                                    py: 0.2,
+                                    backgroundColor: 'gray',
+                                    color: 'black',
+                                }}>
                                 Ações
                             </TableCell>
                         </TableRow>
