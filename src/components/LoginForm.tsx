@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// src/components/LoginForm.tsx
+import React, { useState, useEffect } from 'react'; // 👈 Importe useEffect
 import {
     Container,
     Paper,
@@ -11,6 +12,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { primaryButtonSx, styleModal, textFieldSx } from '../styles/styles';
+import ForgotPasswordModal from '../components/Modal/ForgotPasswordModal';
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -20,6 +22,11 @@ const LoginForm: React.FC = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -28,7 +35,7 @@ const LoginForm: React.FC = () => {
         try {
             const success = await login(email, password);
             if (success) {
-                navigate('/'); // ← Isso deve redirecionar para a página principal
+                navigate('/');
             } else {
                 setError('Credenciais inválidas. Por favor, tente novamente.');
             }
@@ -49,13 +56,16 @@ const LoginForm: React.FC = () => {
                     alignItems: 'center',
                 }}
             >
-                <Paper elevation={3} sx={{
-                    ...styleModal,
-                    padding: 4,
-                    width: '30%',
-                    borderRadius: 10,
-                    border: '2px solid #4a4b4b7e'
-                }}>
+                <Paper
+                    elevation={3}
+                    sx={{
+                        ...styleModal,
+                        padding: 4,
+                        width: '30%',
+                        borderRadius: 10,
+                        border: '2px solid #4a4b4b7e',
+                    }}
+                >
                     <Typography component="h1" variant="h5" align="center" gutterBottom>
                         Login
                     </Typography>
@@ -68,14 +78,14 @@ const LoginForm: React.FC = () => {
 
                     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <TextField
-                            sx={{...textFieldSx}}
+                            sx={textFieldSx}
                             margin="normal"
                             required
                             fullWidth
                             id="email"
                             label="Email"
                             name="email"
-                            autoComplete="email"
+                            autoComplete="nada"
                             autoFocus
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -89,7 +99,7 @@ const LoginForm: React.FC = () => {
                             label="Senha"
                             type="password"
                             id="password"
-                            autoComplete="current-password"
+                            autoComplete="new-password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
@@ -103,8 +113,18 @@ const LoginForm: React.FC = () => {
                             {isLoading ? 'Entrando...' : 'Entrar'}
                         </Button>
                     </Box>
+
+                    <Button
+                        onClick={handleOpenModal}
+                        fullWidth
+                        sx={{ textTransform: 'none', mt: 1, color: '#ca7272' }}
+                    >
+                        Esqueci a senha !!! 😩😩😩
+                    </Button>
                 </Paper>
             </Box>
+
+            <ForgotPasswordModal open={isModalOpen} onClose={handleCloseModal} />
         </Container>
     );
 };
