@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Modal,
     Box,
@@ -23,8 +23,10 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ open, onClose
     const [resetSuccess, setResetSuccess] = useState('');
     const [isResetting, setIsResetting] = useState(false);
     const [isResetCompleted, setIsResetCompleted] = useState(false);
-    // 👈 NOVO ESTADO: Para controlar o botão de envio de código
     const [isCodeSentCompleted, setIsCodeSentCompleted] = useState(false);
+    const [isResendDisabled, setIsResendDisabled] = useState(false);
+    // NOVO ESTADO: Para o contador de tempo
+    const [resendTimer, setResendTimer] = useState(0);
 
     const resetFormState = () => {
         setResetEmail('');
@@ -35,8 +37,23 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ open, onClose
         setResetSuccess('');
         setIsResetting(false);
         setIsResetCompleted(false);
-        setIsCodeSentCompleted(false); // 👈 Limpa o novo estado ao fechar a modal
+        setIsCodeSentCompleted(false);
+        setIsResendDisabled(false);
+        setResendTimer(0); // Reinicia o temporizador
     };
+
+    // NOVO useEffect: para gerenciar a contagem regressiva
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (isResendDisabled && resendTimer > 0) {
+            timer = setTimeout(() => {
+                setResendTimer(resendTimer - 1);
+            }, 1000);
+        } else if (resendTimer === 0) {
+            setIsResendDisabled(false);
+        }
+        return () => clearTimeout(timer);
+    }, [isResendDisabled, resendTimer]);
 
     const handleForgotPassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,16 +71,40 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ open, onClose
             if (response.ok) {
                 setIsCodeSent(true);
                 setResetSuccess('Um código foi enviado para o seu e-mail. Verifique sua caixa de entrada.');
-                setIsCodeSentCompleted(true); // 👈 ATIVA O NOVO ESTADO AQUI
+                setIsCodeSentCompleted(true);
             } else {
                 setIsCodeSent(true);
                 setResetSuccess('Se o e-mail estiver cadastrado, um código foi enviado.');
-                setIsCodeSentCompleted(true); // 👈 Ative o estado mesmo se o e-mail não existir
+                setIsCodeSentCompleted(true);
             }
         } catch (err) {
             setResetError('Não foi possível enviar o código. Tente novamente.');
         } finally {
             setIsResetting(false);
+            setIsResendDisabled(true); // Desativa o botão
+            setResendTimer(20); // Inicia o contador de 15 segundos
+        }
+    };
+
+    const handleResendCode = async () => {
+        setResetError('');
+        setResetSuccess('');
+        setIsResendDisabled(true); // Desativa o botão imediatamente
+        setResendTimer(20); // Inicia o contador de 15 segundos
+
+        try {
+            const response = await fetch('http://localhost:5000/users/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: resetEmail }),
+            });
+            if (response.ok) {
+                setResetSuccess('Um novo código foi enviado para o seu e-mail.');
+            } else {
+                setResetError('Não foi possível reenviar o código. Tente novamente.');
+            }
+        } catch (err) {
+            setResetError('Não foi possível reenviar o código. Tente novamente.');
         }
     };
 
@@ -143,7 +184,6 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ open, onClose
                             fullWidth
                             variant="contained"
                             sx={{ ...primaryButtonSx, mt: 2 }}
-                            // 👈 AGORA, O BOTÃO É DESABILITADO SE JÁ ESTÁ REDEFININDO OU SE O CÓDIGO JÁ FOI ENVIADO
                             disabled={isResetting || isCodeSentCompleted}
                         >
                             {isResetting ? 'Enviando...' : 'Enviar Código'}
@@ -182,6 +222,16 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ open, onClose
                             disabled={isResetting || isResetCompleted}
                         >
                             {isResetting ? 'Redefinindo...' : 'Redefinir Senha'}
+                        </Button>
+                        <Button
+                            fullWidth
+                            variant="text"
+                            onClick={handleResendCode}
+                            sx={{ ...primaryButtonSx, mt: 2 }}
+                            disabled={isResendDisabled || isResetting || isResetCompleted}
+                        >
+                            {/* EXIBIÇÃO CONDICIONAL: Título do botão com o contador */}
+                            {resendTimer > 0 ? `Reenviar Código em ${resendTimer}s` : 'Reenviar Código'}
                         </Button>
                     </Box>
                 )}
