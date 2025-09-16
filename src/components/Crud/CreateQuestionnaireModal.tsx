@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { createQuestionnaires } from '../services/QuestionnairesService';
 import { Questionnaire } from '../../interfaces/questionnaire';
+import { styleModal, textFieldSx } from '../../styles/styles';
 
 interface CreateQuestionnaireModalProps {
     open: boolean;
@@ -18,13 +19,12 @@ interface CreateQuestionnaireModalProps {
 }
 
 const modalStyle = {
+    ...styleModal,
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: { xs: 350, sm: 600, md: 900, lg: 1200 },
-    bgcolor: '#e1d9d9f5',
-    boxShadow: 24,
     p: 4,
     display: 'flex',
     flexDirection: 'column',
@@ -76,14 +76,16 @@ export const CreateQuestionnaireModal: React.FC<CreateQuestionnaireModalProps> =
                     Criar Novo Questionário
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
-                <TextField
-                    label="Pergunta"
-                    name="question"
-                    value={formData.question}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
+                <Box sx={{ ...textFieldSx, mb: 2, gap: 1, display: 'flex', flexDirection: 'column' }} >
+                    <TextField
+                        label="Pergunta"
+                        name="question"
+                        value={formData.question}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                </Box>
                 <Button
                     type="submit"
                     variant="contained"

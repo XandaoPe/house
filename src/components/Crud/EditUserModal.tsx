@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { updateUsers } from '../services/UsersService';
 import { User } from '../../interfaces/users';
+import { styleModal, textFieldSx } from '../../styles/styles';
 
 interface EditUserModalProps {
     open: boolean;
@@ -25,13 +26,12 @@ interface EditUserModalProps {
 }
 
 const modalStyle = {
+    ...styleModal,
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: { xs: 350, sm: 600, md: 900, lg: 1200 },
-    bgcolor: '#e1d9d9f5',
-    boxShadow: 24,
     p: 4,
     display: 'flex',
     flexDirection: 'column',
@@ -98,70 +98,72 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClos
                     Editar Colaborador
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
-                <TextField
-                    label="Nome"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Fone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="CPF"
-                    name="cpf"
-                    value={formData.cpf}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Cargo"
-                    name="cargo"
-                    value={formData.cargo}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <FormControl fullWidth size="small">
-                    <InputLabel id="roles-label">Perfis</InputLabel>
-                    <Select
-                        labelId="roles-label"
-                        id="roles-select"
-                        multiple
-                        value={formData.roles}
-                        onChange={handleRolesChange}
-                        input={<OutlinedInput id="select-multiple-chip" label="Perfis" />}
-                        renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
-                            </Box>
-                        )}
-                    >
-                        {allRoles.map((role) => (
-                            <MenuItem key={role} value={role}>
-                                {role}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                <Box sx={{ ...textFieldSx, mb: 2, gap: 1, display: 'flex', flexDirection: 'column' }} >
+                    <TextField
+                        label="Nome"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Fone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="CPF"
+                        name="cpf"
+                        value={formData.cpf}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Cargo"
+                        name="cargo"
+                        value={formData.cargo}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <FormControl fullWidth size="small">
+                        <InputLabel id="roles-label">Perfis</InputLabel>
+                        <Select
+                            labelId="roles-label"
+                            id="roles-select"
+                            multiple
+                            value={formData.roles}
+                            onChange={handleRolesChange}
+                            input={<OutlinedInput id="select-multiple-chip" label="Perfis" />}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} />
+                                    ))}
+                                </Box>
+                            )}
+                        >
+                            {allRoles.map((role) => (
+                                <MenuItem key={role} value={role}>
+                                    {role}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
                 <Button
                     type="submit"
                     variant="contained"

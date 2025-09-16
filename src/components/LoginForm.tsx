@@ -1,5 +1,5 @@
 // src/components/LoginForm.tsx
-import React, { useState, useEffect } from 'react'; // 👈 Importe useEffect
+import React, { useState, useEffect } from 'react';
 import {
     Container,
     Paper,
@@ -8,6 +8,7 @@ import {
     Typography,
     Box,
     Alert,
+    Tooltip, // 👈 Importe Tooltip
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -23,9 +24,15 @@ const LoginForm: React.FC = () => {
     const navigate = useNavigate();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    // NOVO ESTADO: Para controlar se o Tooltip está aberto
+    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
+
+    // NOVAS FUNÇÕES: Para abrir e fechar o Tooltip
+    const handleOpenTooltip = () => setIsTooltipOpen(true);
+    const handleCloseTooltip = () => setIsTooltipOpen(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -112,6 +119,33 @@ const LoginForm: React.FC = () => {
                         >
                             {isLoading ? 'Entrando...' : 'Entrar'}
                         </Button>
+                    </Box>
+
+                    {/* NOVO ELEMENTO: Tooltip para o "Primeiro Acesso?" */}
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            width: '100%',
+                            mt: 1,
+                        }}
+                    >
+                        <Tooltip
+                            open={isTooltipOpen}
+                            onClose={handleCloseTooltip}
+                            onOpen={handleOpenTooltip}
+                            title="Insira o Seu email(somente cadastrados no sistema), digite esta senha: 123456. Após logado, altere para sua senha preferida(botão ALTERAR SENHA)."
+                            arrow // Adiciona uma seta ao pop-up
+                            placement="top" // Posição do pop-up
+                        >
+                            <Typography
+                                variant="body1"
+                                color="text.secondary"
+                                sx={{ color: "white", cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                            >
+                                Primeiro Acesso?
+                            </Typography>
+                        </Tooltip>
                     </Box>
 
                     <Button

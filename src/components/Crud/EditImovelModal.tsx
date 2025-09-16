@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { updateImovel } from '../../components/services/imovesService';
 import { Imovel } from '../../interfaces/Imovel';
+import { styleModal, textFieldSx } from '../../styles/styles';
 
 interface EditImovelModalProps {
     open: boolean;
@@ -19,13 +20,12 @@ interface EditImovelModalProps {
 }
 
 const modalStyle = {
+    ...styleModal,
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: { xs: 350, sm: 600, md: 900, lg: 1200 },
-    bgcolor: '#e1d9d9f5',
-    boxShadow: 24,
     p: 4,
     display: 'flex',
     flexDirection: 'column',
@@ -76,66 +76,68 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
                     Editar Imóvel
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
-                <TextField
-                    label="Thumb"
-                    name="thumb"
-                    value={formData.thumb}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Tipo"
-                    name="tipo"
-                    value={formData.tipo}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Endereco"
-                    name="endereco"
-                    value={formData.endereco}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Cidade"
-                    name="cidade"
-                    value={formData.cidade}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Uf"
-                    name="uf"
-                    value={formData.uf}
-                    onChange={handleChange}
-                    multiline
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Valor"
-                    name="valor"
-                    value={formData.valor}
-                    onChange={handleChange}
-                    multiline
-                    required
-                    size="small"
-                />
-                <TextField
-                    label="Descrição"
-                    name="descricao"
-                    value={formData.descricao}
-                    onChange={handleChange}
-                    multiline
-                    rows={3}
-                    required
-                    size="small"
-                />
+                <Box sx={{ ...textFieldSx, mb: 2, gap: 1, display: 'flex', flexDirection: 'column' }} >
+                    <TextField
+                        label="Thumb"
+                        name="thumb"
+                        value={formData.thumb}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Tipo"
+                        name="tipo"
+                        value={formData.tipo}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Endereco"
+                        name="endereco"
+                        value={formData.endereco}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Cidade"
+                        name="cidade"
+                        value={formData.cidade}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Uf"
+                        name="uf"
+                        value={formData.uf}
+                        onChange={handleChange}
+                        multiline
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Valor"
+                        name="valor"
+                        value={formData.valor}
+                        onChange={handleChange}
+                        multiline
+                        required
+                        size="small"
+                    />
+                    <TextField
+                        label="Descrição"
+                        name="descricao"
+                        value={formData.descricao}
+                        onChange={handleChange}
+                        multiline
+                        rows={3}
+                        required
+                        size="small"
+                    />
+                </Box>
                 <Button
                     type="submit"
                     variant="contained"

@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { updateResponses } from '../services/responseService';
 import { Response } from '../../interfaces/response';
+import { styleModal, textFieldSx } from '../../styles/styles';
 
 interface EditResponseModalProps {
     open: boolean;
@@ -19,13 +20,12 @@ interface EditResponseModalProps {
 }
 
 const modalStyle = {
+    ...styleModal,
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: { xs: 350, sm: 600, md: 900, lg: 1200 },
-    bgcolor: '#e1d9d9f5',
-    boxShadow: 24,
     p: 4,
     display: 'flex',
     flexDirection: 'column',
@@ -76,14 +76,16 @@ export const EditResponseModal: React.FC<EditResponseModalProps> = ({ open, resp
                     Editar Imóvel
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
-                <TextField
-                    label="Resposta"
-                    name="questionresponse"
-                    value={formData.questionresponse}
-                    onChange={handleChange}
-                    required
-                    size="small"
-                />
+                <Box sx={{ ...textFieldSx, mb: 2, gap: 1, display: 'flex', flexDirection: 'column' }} >
+                    <TextField
+                        label="Resposta"
+                        name="questionresponse"
+                        value={formData.questionresponse}
+                        onChange={handleChange}
+                        required
+                        size="small"
+                    />
+                </Box>
                 <Button
                     type="submit"
                     variant="contained"

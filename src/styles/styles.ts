@@ -64,7 +64,8 @@ export const styleModal = {
     bgcolor: 'rgba(0, 0, 0, 0.8)', // Fundo preto com 70% de opacidade
     color: 'white', // Cor das fontes em branco
     border: '2px solid #fff', // Borda branca
-    boxShadow: '0px 0px 30px 10px rgba(192, 192, 192, 0.7)', 
+    // boxShadow: '0px 0px 30px 10px rgba(192, 192, 192, 0.7)', 
+    boxShadow: '0px 0px 30px 10px rgba(97, 160, 243, 0.7)', 
     p: 4,
     borderRadius: '8px',
 };
