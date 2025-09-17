@@ -7,6 +7,10 @@ import {
     Button,
     Alert,
     CircularProgress,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
 } from '@mui/material';
 import { updateImovel } from '../../components/services/imovesService';
 import { Imovel } from '../../interfaces/Imovel';
@@ -47,7 +51,7 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
         return null;
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: any) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
@@ -60,8 +64,8 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
         setError(null);
         try {
             await updateImovel(formData);
-            onSuccess(formData); // Chama o callback de sucesso com os dados atualizados
-            onClose(); // Fecha a modal
+            onSuccess(formData);
+            onClose();
         } catch (err) {
             setError('Falha ao atualizar o imóvel. Verifique os dados e tente novamente.');
         } finally {
@@ -76,32 +80,66 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
                     Editar Imóvel
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
-                <Box sx={{ ...textFieldSx, mb: 2, gap: 1, display: 'flex', flexDirection: 'column' }} >
+                <Box sx={{ ...textFieldSx, mb: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }} >
+                    <FormControl sx={{ flex: '1 1 32%' }} size="small" required>
+                        <InputLabel id="tipo-label">Tipo</InputLabel>
+                        <Select
+                            labelId="tipo-label"
+                            id="tipo-select"
+                            name="tipo"
+                            value={formData.tipo}
+                            label="Tipo"
+                            onChange={handleChange}
+                            sx={{ ...textFieldSx, color: 'white' }}
+                        >
+                            <MenuItem value="01">01</MenuItem>
+                            <MenuItem value="02">02</MenuItem>
+                            <MenuItem value="03">03</MenuItem>
+                            <MenuItem value="República Masculina 01">República Masculina 01</MenuItem>
+                            <MenuItem value="República Masculina 02">República Masculina 02</MenuItem>
+                            <MenuItem value="República Masculina 03">República Masculina 03</MenuItem>
+                            <MenuItem value="República Feminina 01">República Feminina 01</MenuItem>
+                            <MenuItem value="República Feminina 02">República Feminina 02</MenuItem>
+                            <MenuItem value="República Feminina 03">República Feminina 03</MenuItem>
+                        </Select>
+                    </FormControl>
                     <TextField
-                        label="Thumb"
-                        name="thumb"
-                        value={formData.thumb}
+                        sx={{ flex: '1 1 52%' }}
+                        label="Rua"
+                        name="rua"
+                        value={formData.rua}
                         onChange={handleChange}
                         required
                         size="small"
                     />
                     <TextField
-                        label="Tipo"
-                        name="tipo"
-                        value={formData.tipo}
+                        sx={{ flex: '1 1 12%' }}
+                        label="Número"
+                        name="numero"
+                        value={formData.numero}
                         onChange={handleChange}
                         required
                         size="small"
                     />
                     <TextField
-                        label="Endereco"
-                        name="endereco"
-                        value={formData.endereco}
+                        sx={{ flex: '1 1 40%' }}
+                        label="Complemento"
+                        name="complemento"
+                        value={formData.complemento}
+                        onChange={handleChange}
+                        size="small"
+                    />
+                    <TextField
+                        sx={{ flex: '1 1 18%' }}
+                        label="CEP"
+                        name="cep"
+                        value={formData.cep}
                         onChange={handleChange}
                         required
                         size="small"
                     />
                     <TextField
+                        sx={{ flex: '1 1 30%' }}
                         label="Cidade"
                         name="cidade"
                         value={formData.cidade}
@@ -110,31 +148,38 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
                         size="small"
                     />
                     <TextField
+                        sx={{ flex: '1 1 08%' }}
                         label="Uf"
                         name="uf"
                         value={formData.uf}
                         onChange={handleChange}
-                        multiline
                         required
                         size="small"
                     />
                     <TextField
-                        label="Valor"
-                        name="valor"
-                        value={formData.valor}
+                        sx={{ flex: '1 1 48%' }}
+                        label="Copasa"
+                        name="copasa"
+                        value={formData.copasa}
                         onChange={handleChange}
-                        multiline
-                        required
                         size="small"
-                    />
+                        />
                     <TextField
-                        label="Descrição"
-                        name="descricao"
-                        value={formData.descricao}
+                        sx={{ flex: '1 1 48%' }}
+                        label="Cemig"
+                        name="cemig"
+                        value={formData.cemig}
+                        onChange={handleChange}
+                        size="small"
+                        />
+                    <TextField
+                        sx={{ flex: '1 1 100%' }}
+                        label="Observação"
+                        name="obs"
+                        value={formData.obs}
                         onChange={handleChange}
                         multiline
-                        rows={3}
-                        required
+                        rows={2}
                         size="small"
                     />
                 </Box>

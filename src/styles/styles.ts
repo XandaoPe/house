@@ -2,22 +2,27 @@
 import { SxProps, Theme } from '@mui/material';
 
 export const textFieldSx: SxProps<Theme> = {
-    input: {
+    // Ajuste o seletor para atingir o elemento de entrada do Material-UI
+    '& .MuiInputBase-input': {
         color: 'white',
         // --- Adicione estes estilos para corrigir o autocompletar ---
         '&:-webkit-autofill': {
-            WebkitBoxShadow: '0 0 0 1000px #1e1e1e inset', // Cor de fundo do input (mesma do seu Paper)
-            WebkitTextFillColor: 'white', // Cor do texto
-            caretColor: 'white', // Cor do cursor
-            transition: 'background-color 5000s ease-in-out 0s', // Transição para evitar mudança de cor brusca
+            WebkitBoxShadow: '0 0 0 1000px #1e1e1e inset',
+            WebkitTextFillColor: 'white',
+            caretColor: 'white',
+            transition: 'background-color 5000s ease-in-out 0s',
         },
     },
+
+    // O seletor label pode ficar como está
     label: {
         color: 'gray',
         '&.Mui-focused': {
             color: 'white',
         },
     },
+
+    // O seletor para o outline pode ficar como está
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
             borderColor: 'rgba(255, 255, 255, 0.5)',

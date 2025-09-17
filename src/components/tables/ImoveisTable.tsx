@@ -38,11 +38,15 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Tipo</TableCell>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Endereço</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Rua</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Número</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Complemento</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>CEP</TableCell>
                         <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Cidade</TableCell>
                         <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>UF</TableCell>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Valor</TableCell>
-                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Descrição</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Observação</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Copasa</TableCell>
+                        <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Cemig</TableCell>
                         <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
@@ -50,11 +54,15 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                     {imoveis.map((imovel) => (
                         <TableRow key={imovel._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                             <TableCell sx={tableCellSx}>{imovel.tipo}</TableCell>
-                            <TableCell sx={tableCellSx}>{imovel.endereco}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.rua}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.numero}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.complemento}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.cep}</TableCell>
                             <TableCell sx={tableCellSx}>{imovel.cidade}</TableCell>
                             <TableCell sx={tableCellSx}>{imovel.uf}</TableCell>
-                            <TableCell sx={tableCellSx}>{imovel.valor}</TableCell>
-                            <TableCell sx={tableCellSx}>{imovel.descricao}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.obs}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.copasa}</TableCell>
+                            <TableCell sx={tableCellSx}>{imovel.cemig}</TableCell>
                             <TableCell align="right" sx={tableCellSx}>
                                 <ButtonGroup variant="contained" aria-label="Ações de Imóvel">
                                     <Button
