@@ -11,10 +11,13 @@ import {
     MenuItem,
     InputLabel,
     FormControl,
+    IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { createImovel } from '../services/imovesService';
 import { Imovel } from '../../interfaces/Imovel';
 import { styleModal, textFieldSx } from '../../styles/styles';
+import { buscarEnderecoPorCep } from '../services/cepServices';
 
 interface CreateImovelModalProps {
     open: boolean;
@@ -35,27 +38,58 @@ const modalStyle = {
     gap: 1,
 };
 
+// Define o estado inicial do formulário para reutilização
+const initialFormState = {
+    tipo: '',
+    rua: '',
+    numero: '',
+    complemento: '',
+    cep: '',
+    cidade: '',
+    uf: '',
+    obs: '',
+    copasa: '',
+    cemig: ''
+};
+
 export const CreateImovelModal: React.FC<CreateImovelModalProps> = ({ open, onClose, onSuccess }) => {
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
-    const [formData, setFormData] = React.useState({
-        tipo: '',
-        rua: '',
-        numero: '',
-        complemento: '',
-        cep: '',
-        cidade: '',
-        uf: '',
-        obs: '',
-        copasa: '',
-        cemig: ''
-    });
+    const [formData, setFormData] = React.useState(initialFormState);
 
-    const handleChange = (e: any) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+    // Efeito para resetar os campos quando o modal é aberto
+    React.useEffect(() => {
+        if (open) {
+            setFormData(initialFormState);
+            setError(null);
+        }
+    }, [open]);
+
+    const handleChange = async (e: any | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }>) => {
+        const { name, value } = e.target;
+
+        setFormData(prev => ({
+            ...prev,
+            [name!]: value,
+        }));
+
+        if (name === 'cep' && typeof value === 'string' && value.replace(/\D/g, '').length === 8) {
+            try {
+                const endereco = await buscarEnderecoPorCep(value);
+                setFormData(prev => ({
+                    ...prev,
+                    cidade: endereco.cidade,
+                    uf: endereco.uf,
+                }));
+            } catch (err: any) {
+                setError(err.message);
+                setFormData(prev => ({
+                    ...prev,
+                    cidade: '',
+                    uf: '',
+                }));
+            }
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -63,8 +97,9 @@ export const CreateImovelModal: React.FC<CreateImovelModalProps> = ({ open, onCl
         setLoading(true);
         setError(null);
         try {
-            const newImovel = await createImovel(formData);
+            const newImovel = await createImovel(formData as Imovel);
             onSuccess(newImovel);
+            // Ao fechar, também reseta para garantir que esteja limpo para a próxima vez
             onClose();
         } catch (err) {
             setError('Falha ao criar o imóvel. Verifique os dados e tente novamente.');
@@ -76,6 +111,20 @@ export const CreateImovelModal: React.FC<CreateImovelModalProps> = ({ open, onCl
     return (
         <Modal open={open} onClose={onClose}>
             <Box sx={modalStyle} component="form" onSubmit={handleSubmit}>
+                <IconButton
+                    aria-label="close"
+                    onClick={onClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[900],
+                    }}
+                >
+                    <CloseIcon
+                        sx={{ color: 'red' }}
+                    />
+                </IconButton>
                 <Typography variant="h6" component="h2">
                     Criar Novo Imóvel
                 </Typography>

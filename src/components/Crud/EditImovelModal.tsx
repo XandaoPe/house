@@ -11,10 +11,13 @@ import {
     MenuItem,
     InputLabel,
     FormControl,
+    IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { updateImovel } from '../../components/services/imovesService';
 import { Imovel } from '../../interfaces/Imovel';
 import { styleModal, textFieldSx } from '../../styles/styles';
+import { buscarEnderecoPorCep } from '../services/cepServices';
 
 interface EditImovelModalProps {
     open: boolean;
@@ -51,11 +54,34 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
         return null;
     }
 
-    const handleChange = (e: any) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
+    const handleChange = async (e: any) => {
+        const { name, value } = e.target;
+
+        // Atualiza o estado do formulário imediatamente, garantindo a tipagem correta
+        setFormData(prev => {
+            const newFormData = prev ? { ...prev, [name!]: value } : { [name!]: value };
+            return newFormData as Imovel;
         });
+
+        if (name === 'cep' && typeof value === 'string' && value.replace(/\D/g, '').length === 8) {
+            try {
+                // Remove caracteres não numéricos para a busca
+                const cepLimpo = value.replace(/\D/g, '');
+                const endereco = await buscarEnderecoPorCep(cepLimpo);
+                setFormData(prev => ({
+                    ...(prev as Imovel),
+                    cidade: endereco.cidade,
+                    uf: endereco.uf,
+                }));
+            } catch (err: any) {
+                setError(err.message);
+                setFormData(prev => ({
+                    ...(prev as Imovel),
+                    cidade: '',
+                    uf: '',
+                }));
+            }
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -63,9 +89,11 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
         setLoading(true);
         setError(null);
         try {
-            await updateImovel(formData);
-            onSuccess(formData);
-            onClose();
+            if (formData) {
+                await updateImovel(formData);
+                onSuccess(formData);
+                onClose();
+            }
         } catch (err) {
             setError('Falha ao atualizar o imóvel. Verifique os dados e tente novamente.');
         } finally {
@@ -76,6 +104,20 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
     return (
         <Modal open={open} onClose={onClose}>
             <Box sx={modalStyle} component="form" onSubmit={handleSubmit}>
+                <IconButton
+                    aria-label="close"
+                    onClick={onClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[900],
+                    }}
+                >
+                    <CloseIcon
+                        sx={{ color: 'red' }}
+                    />
+                </IconButton>
                 <Typography variant="h6" component="h2">
                     Editar Imóvel
                 </Typography>
@@ -90,7 +132,21 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
                             value={formData.tipo}
                             label="Tipo"
                             onChange={handleChange}
-                            sx={{ ...textFieldSx, color: 'white' }}
+                            sx={{
+                                color: 'white',
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'white',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                    color: 'white',
+                                },
+                            }}
                         >
                             <MenuItem value="01">01</MenuItem>
                             <MenuItem value="02">02</MenuItem>
@@ -163,7 +219,7 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
                         value={formData.copasa}
                         onChange={handleChange}
                         size="small"
-                        />
+                    />
                     <TextField
                         sx={{ flex: '1 1 48%' }}
                         label="Cemig"
@@ -171,7 +227,7 @@ export const EditImovelModal: React.FC<EditImovelModalProps> = ({ open, imovel, 
                         value={formData.cemig}
                         onChange={handleChange}
                         size="small"
-                        />
+                    />
                     <TextField
                         sx={{ flex: '1 1 100%' }}
                         label="Observação"
