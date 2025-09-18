@@ -89,3 +89,20 @@ export const fetchUserById = async (id: string): Promise<User> => {
         }
     }
 };
+
+export const deactivateUser = async (id: string): Promise<User> => {
+    try {
+        const response = await api.patch<User>(`${API_URL}/${id}/deactivate`);
+        return response.data;
+    } catch (error: any) {
+        console.error('Erro ao desativar usuário:', error);
+
+        if (error.response?.status === 401) {
+            throw new Error('Sessão expirada. Faça login novamente.');
+        } else if (error.response?.status === 403) {
+            throw new Error('Acesso negado. Você não possui permissão para desativar usuários.');
+        } else {
+            throw new Error('Falha ao conectar com o servidor.');
+        }
+    }
+};

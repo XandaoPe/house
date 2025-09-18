@@ -8,4 +8,5 @@ export interface User {
     cargo: string;
     roles: string[];
     password?: string; // Adicione a senha como opcional
+    isDisabled?: boolean;
 }

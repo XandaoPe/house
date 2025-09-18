@@ -18,11 +18,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { User } from '../../interfaces/users';
 import { scrollableTableContainer, tableCellSx, tableContainerSx, textFieldSx } from '../../styles/styles';
+import BlockIcon from '@mui/icons-material/Block'; // 👈 Importar ícone de bloqueio
+import { deactivateUser } from '../services/UsersService'; // 👈 Importar o novo serviço
 
 interface usersTableProps {
     users: User[];
     onEdit: (user: User) => void;
     onDelete: (user: User) => void;
+    onDeactivate: (user: User) => void;
 }
 
 // Estilo para o texto destacado
@@ -53,7 +56,7 @@ const highlightText = (text: string, highlight: string) => {
     );
 };
 
-export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit }) => {
+export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit, onDeactivate }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [highlightedColumns, setHighlightedColumns] = useState<string[]>([]);
 
@@ -234,6 +237,15 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit 
                                             sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
                                         >
                                             Editar
+                                        </Button>
+                                        <Button
+                                            color="warning"
+                                            onClick={() => onDeactivate(user)}
+                                            startIcon={<BlockIcon />}
+                                            sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
+                                            disabled={user.isDisabled} // Desativa o botão se o usuário já estiver inativo
+                                        >
+                                            {user.isDisabled ? 'Inativo' : 'Desativar'}
                                         </Button>
                                         <Button
                                             color="error"

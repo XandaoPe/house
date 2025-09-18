@@ -11,7 +11,8 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { User } from '../../interfaces/users';
-import { deleteUsers, fetchUsers } from '../services/UsersService';
+// 👈 Importar o novo serviço de desativação e o de listagem
+import { deleteUsers, fetchUsers, deactivateUser } from '../services/UsersService';
 import { UsersTable } from '../tables/UsersTable';
 import { CreateUserModal } from '../Crud/CreateUserModal';
 import { EditUserModal } from '../Crud/EditUserModal';
@@ -30,8 +31,8 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
     const [users, setUsers] = React.useState<User[]>([]);
     const [error, setError] = React.useState<string | null>(null);
     const [message, setMessage] = React.useState<string | null>(null);
-    const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false); // Novo estado
-    const [editingUser, setEditingUser] = React.useState<User | null>(null); // Novo estado
+    const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+    const [editingUser, setEditingUser] = React.useState<User | null>(null);
 
     const loadData = async () => {
         setLoading(true);
@@ -51,6 +52,7 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
             loadData();
         }
     }, [open]);
+
     React.useEffect(() => {
         if (message) {
             const timer = setTimeout(() => {
@@ -68,6 +70,7 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
             return () => clearTimeout(timer);
         }
     }, [error]);
+
     const handleCreate = () => {
         setIsCreateModalOpen(true);
     };
@@ -78,16 +81,14 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
         loadData();
     };
 
-    // Nova função para abrir a modal de edição
     const handleEdit = (user: User) => {
-        setEditingUser(user); // Define o imóvel que será editado
+        setEditingUser(user);
     };
 
-    // Função de sucesso da edição
     const handleEditSuccess = (updateduser: User) => {
         setMessage('Imóvel atualizado com sucesso!');
-        setEditingUser(null); // Fecha a modal de edição
-        loadData(); // Recarrega os dados para mostrar a alteração
+        setEditingUser(null);
+        loadData();
     };
 
     const handleDelete = async (user: User) => {
@@ -100,6 +101,25 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
                 setMessage('Imóvel excluído com sucesso!');
             } catch (err) {
                 setError('Falha ao excluir o imóvel.');
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
+    // 👈 NOVO HANDLER: Lida com a desativação do usuário
+    const handleDeactivate = async (user: User) => {
+        setMessage(null);
+        if (window.confirm(`Tem certeza que deseja desativar o colaborador "${user.name}"?`)) {
+            setLoading(true);
+            try {
+                // Chamando a nova função de serviço para desativar
+                await deactivateUser(user._id);
+                // Recarrega os dados para que o usuário não apareça mais na tabela
+                await loadData();
+                setMessage('Colaborador desativado com sucesso!');
+            } catch (err) {
+                setError('Falha ao desativar o colaborador.');
             } finally {
                 setLoading(false);
             }
@@ -145,13 +165,14 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
                     )}
 
                     {!loading && !error && (
-                        <UsersTable users={users} onEdit={handleEdit} onDelete={handleDelete} />
+                        // 👈 Passando a nova prop onDeactivate para a tabela
+                        <UsersTable users={users} onEdit={handleEdit} onDelete={handleDelete} onDeactivate={handleDeactivate} />
                     )}
 
                     <Button
                         onClick={onClose}
-                        variant="contained" // Adicionei 'contained' para dar um fundo vermelho
-                        color="error" // Propriedade que define a cor para vermelho do tema
+                        variant="contained"
+                        color="error"
                         sx={{ mt: 2 }}
                     >
                         Fechar
@@ -164,7 +185,6 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
                 onClose={() => setIsCreateModalOpen(false)}
                 onSuccess={handleCreateSuccess}
             />
-            {/* Modal de Edição */}
             <EditUserModal
                 open={!!editingUser}
                 user={editingUser}
