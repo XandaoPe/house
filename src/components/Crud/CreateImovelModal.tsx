@@ -220,7 +220,7 @@ export const CreateImovelModal: React.FC<CreateImovelModalProps> = ({ open, onCl
                         size="small"
                     />
                     <TextField
-                        sx={{ flex: '1 1 48%' }}
+                        sx={{ flex: '1 1 10%' }}
                         label="Copasa"
                         name="copasa"
                         value={formData.copasa}
@@ -228,7 +228,7 @@ export const CreateImovelModal: React.FC<CreateImovelModalProps> = ({ open, onCl
                         size="small"
                     />
                     <TextField
-                        sx={{ flex: '1 1 48%' }}
+                        sx={{ flex: '1 1 10%' }}
                         label="Cemig"
                         name="cemig"
                         value={formData.cemig}
@@ -236,7 +236,7 @@ export const CreateImovelModal: React.FC<CreateImovelModalProps> = ({ open, onCl
                         size="small"
                     />
                     <TextField
-                        sx={{ flex: '1 1 100%' }}
+                        sx={{ flex: '1 1 77%' }}
                         label="Observação"
                         name="obs"
                         value={formData.obs}
