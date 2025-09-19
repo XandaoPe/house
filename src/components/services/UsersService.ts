@@ -106,3 +106,35 @@ export const deactivateUser = async (id: string): Promise<User> => {
         }
     }
 };
+
+export const fetchAllUsers = async (): Promise<User[]> => {
+    try {
+        const response = await api.get<User[]>(`${API_URL}/all`);
+        return response.data;
+    } catch (error: any) {
+        console.error('Erro ao buscar todos os usuários:', error);
+        if (error.response?.status === 401) {
+            throw new Error('Sessão expirada. Faça login novamente.');
+        } else if (error.response?.status === 403) {
+            throw new Error('Acesso negado. Você não possui permissão para visualizar todos os usuários.');
+        } else {
+            throw new Error('Falha ao conectar com o servidor.');
+        }
+    }
+}
+
+export const activateUser = async (id: string): Promise<User> => {
+    try {
+        const response = await api.patch<User>(`${API_URL}/${id}/activate`);
+        return response.data;
+    } catch (error: any) {
+        console.error('Erro ao ativar usuário:', error);
+        if (error.response?.status === 401) {
+            throw new Error('Sessão expirada. Faça login novamente.');
+        } else if (error.response?.status === 403) {
+            throw new Error('Acesso negado. Você não possui permissão para ativar usuários.');
+        } else {
+            throw new Error('Falha ao conectar com o servidor.');
+        }
+    }
+};

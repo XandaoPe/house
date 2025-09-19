@@ -1,4 +1,5 @@
 // src/interfaces/Imovel.ts
+// src/interfaces/users.ts
 export interface User {
     _id: any;
     name: string;
@@ -7,6 +8,6 @@ export interface User {
     cpf: string;
     cargo: string;
     roles: string[];
-    password?: string; // Adicione a senha como opcional
-    isDisabled?: boolean;
+    password?: string;
+    isDisabled?: boolean; // Deve estar presente
 }

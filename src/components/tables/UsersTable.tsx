@@ -1,3 +1,4 @@
+// src/components/UsersTable.tsx
 import * as React from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import {
@@ -16,26 +17,27 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import BlockIcon from '@mui/icons-material/Block';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Ícone para ativar
 import { User } from '../../interfaces/users';
 import { scrollableTableContainer, tableCellSx, tableContainerSx, textFieldSx } from '../../styles/styles';
-import BlockIcon from '@mui/icons-material/Block'; // 👈 Importar ícone de bloqueio
-import { deactivateUser } from '../services/UsersService'; // 👈 Importar o novo serviço
 
 interface usersTableProps {
     users: User[];
     onEdit: (user: User) => void;
     onDelete: (user: User) => void;
     onDeactivate: (user: User) => void;
+    // 🔥 NOVAS PROPS: para ativar e para saber o modo de exibição
+    onActivate: (user: User) => void;
+    showDisabledUsers: boolean;
 }
 
-// Estilo para o texto destacado
 const highlightStyle = {
     backgroundColor: '#ADD8E6',
     color: 'black',
     fontWeight: 'bold',
 };
 
-// Função auxiliar para destacar o texto
 const highlightText = (text: string, highlight: string) => {
     if (!highlight) {
         return text;
@@ -56,7 +58,7 @@ const highlightText = (text: string, highlight: string) => {
     );
 };
 
-export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit, onDeactivate }) => {
+export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit, onDeactivate, onActivate, showDisabledUsers }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [highlightedColumns, setHighlightedColumns] = useState<string[]>([]);
 
@@ -114,10 +116,18 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
         };
     }, [sortedAndFilteredUsers, searchTerm]);
 
-    if (users.length === 0) {
+    if (users.length === 0 && !showDisabledUsers) { // Apenas se não estiver mostrando desabilitados
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-                Nenhum usuário encontrado.
+                Nenhum usuário ativo encontrado.
+            </Typography>
+        );
+    }
+
+    if (users.length === 0 && showDisabledUsers) { // Se estiver mostrando desabilitados e não houver nenhum
+        return (
+            <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+                Nenhum usuário (ativo ou inativo) encontrado.
             </Typography>
         );
     }
@@ -164,60 +174,12 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                                 backgroundColor: 'gray',
                                 color: 'black',
                             }}>
-                            <TableCell
-                                sx={{
-                                    ...tableCellSx,
-                                    py: 0.2,
-                                    backgroundColor: 'gray',
-                                    color: 'black',
-                                }}>
-                                Nome
-                            </TableCell>
-                            <TableCell
-                                sx={{
-                                    ...tableCellSx,
-                                    py: 0.2,
-                                    backgroundColor: 'gray',
-                                    color: 'black',
-                                }}>
-                                Email
-                            </TableCell>
-                            <TableCell
-                                sx={{
-                                    ...tableCellSx,
-                                    py: 0.2,
-                                    backgroundColor: 'gray',
-                                    color: 'black',
-                                }}>
-                                Fone
-                            </TableCell>
-                            <TableCell
-                                sx={{
-                                    ...tableCellSx,
-                                    py: 0.2,
-                                    backgroundColor: 'gray',
-                                    color: 'black',
-                                }}>
-                                CPF
-                            </TableCell>
-                            <TableCell
-                                sx={{
-                                    ...tableCellSx,
-                                    py: 0.2,
-                                    backgroundColor: 'gray',
-                                    color: 'black',
-                                }}>
-                                Cargo
-                            </TableCell>
-                            <TableCell align="right"
-                                sx={{
-                                    ...tableCellSx,
-                                    py: 0.2,
-                                    backgroundColor: 'gray',
-                                    color: 'black',
-                                }}>
-                                Ações
-                            </TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Nome</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Email</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Fone</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>CPF</TableCell>
+                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Cargo</TableCell>
+                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Ações</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -238,15 +200,29 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                                         >
                                             Editar
                                         </Button>
-                                        <Button
-                                            color="warning"
-                                            onClick={() => onDeactivate(user)}
-                                            startIcon={<BlockIcon />}
-                                            sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
-                                            disabled={user.isDisabled} // Desativa o botão se o usuário já estiver inativo
-                                        >
-                                            {user.isDisabled ? 'Inativo' : 'Desativar'}
-                                        </Button>
+
+                                        {/* 🔥 Lógica condicional para o botão Ativar/Desativar */}
+                                        {user.isDisabled ? (
+                                            <Button
+                                                color="success" // Cor verde para ativar
+                                                onClick={() => onActivate(user)}
+                                                startIcon={<CheckCircleIcon />}
+                                                sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
+                                            >
+                                                Ativar
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                color="warning"
+                                                onClick={() => onDeactivate(user)}
+                                                startIcon={<BlockIcon />}
+                                                sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
+                                                disabled={user.isDisabled} // Desativa o botão se o usuário já estiver inativo (caso não esteja no modo "Listar Todos")
+                                            >
+                                                Desativar
+                                            </Button>
+                                        )}
+
                                         <Button
                                             color="error"
                                             onClick={() => onDelete(user)}
