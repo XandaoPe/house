@@ -11,32 +11,18 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { Imovel } from '../../interfaces/Imovel';
-import { deleteImovel, fetchImoveis } from '../services/imovesService';
+import { activateImovel, deactivateImovel, deleteImovel, fetchAllImoveis, fetchImoveis } from '../services/imovesService';
 import { ImoveisTable } from '../tables/ImoveisTable';
 import { CreateImovelModal } from '../Crud/CreateImovelModal';
 import { EditImovelModal } from '../Crud/EditImovelModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { styleModal } from '../../styles/styles';
+import PeopleIcon from '@mui/icons-material/People';
 
 interface ImoveisModalProps {
     open: boolean;
     onClose: () => void;
 }
-
-const modalStyle = {
-    // position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: { xs: 350, sm: 600, md: 900, lg: 1200 },
-    maxHeight: '90vh',
-    overflowY: 'auto',
-    bgcolor: '#e1d9d9f5',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    position: 'relative',
-};
 
 export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => {
     const { hasPermission } = useAuth();
@@ -47,12 +33,13 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
     const [message, setMessage] = React.useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false); // Novo estado
     const [editingImovel, setEditingImovel] = React.useState<Imovel | null>(null); // Novo estado
+    const [showDisabledImovel, setShowDisabledImovel] = React.useState(false);
 
     const loadData = async () => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchImoveis();
+            const data = showDisabledImovel ? await fetchAllImoveis() : await fetchImoveis();
             setImoveis(data);
         } catch (err) {
             setError('Não foi possível carregar os dados. Tente novamente.');
@@ -65,7 +52,7 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
         if (open) {
             loadData();
         }
-    }, [open]);
+    }, [open, showDisabledImovel]);
 
     React.useEffect(() => {
         if (message) {
@@ -123,13 +110,52 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
         }
     };
 
+    const handleDeactivate = async (imovel: Imovel) => {
+        setMessage(null);
+        if (window.confirm(`Tem certeza que deseja desativar o imóvel "${imovel.tipo}"?`)) {
+            setLoading(true);
+            try {
+                await deactivateImovel(imovel._id);
+                await loadData();
+                setMessage('Imóvel desativado com sucesso!');
+            } catch (err) {
+                setError('Falha ao desativar o Imóvel.');
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
+    const handleActivate = async (imovel: Imovel) => {
+        setMessage(null);
+        if (window.confirm(`Tem certeza que deseja ativar o imóvel "${imovel.tipo}"?`)) {
+            setLoading(true);
+            try {
+                await activateImovel(imovel._id);
+                await loadData();
+                setMessage('Imóvel ativado com sucesso!');
+            } catch (err) {
+                setError('Falha ao ativar o imóvel.');
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
+    const handleToggleDisabled = () => {
+        setShowDisabledImovel(prevState => !prevState);
+    };
+
     return (
         <>
             <Modal open={open} onClose={onClose}>
                 <Box sx={styleModal}>
                     <IconButton
                         aria-label="close"
-                        onClick={onClose}
+                        onClick={() => {
+                            onClose();
+                            setShowDisabledImovel(false);
+                        }}
                         sx={{
                             position: 'absolute',
                             right: 8,
@@ -146,27 +172,52 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
                     </Typography>
                     {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-                    <Button
-                        disabled={!canEdit}
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        sx={{ mb: 2 }}
-                        onClick={handleCreate}
-                    >
-                        Criar Novo Imóvel
-                    </Button>
-                    {loading && (
-                        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                            <CircularProgress />
-                        </Box>
-                    )}
+
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mb: 2 }}>
+                        <Button
+                            variant="contained"
+                            onClick={handleToggleDisabled}
+                            color={showDisabledImovel ? "info" : "primary"} // Ajuste de cores
+                            startIcon={<PeopleIcon />}
+                            sx={{
+                                py: 0.2, // Reduz o padding vertical para alinhar melhor
+                                px: 1, // Reduz o padding horizontal
+                                fontSize: '0.75rem' // Ajusta o tamanho da fonte para o botão pequeno
+                            }}
+                        >
+                            {showDisabledImovel ? 'Listar Ativos' : 'Listar Todos'}
+                        </Button>
+                        <Button
+                            disabled={!canEdit}
+                            variant="contained"
+                            startIcon={<AddIcon />}
+                            onClick={handleCreate}
+                            sx={{
+                                py: 0.2, // Reduz o padding vertical para alinhar melhor
+                                px: 1, // Reduz o padding horizontal
+                                fontSize: '0.75rem' // Ajusta o tamanho da fonte para o botão pequeno
+                            }}
+                        >
+                            Criar Novo Usuário
+                        </Button>
+                    </Box>
 
                     {!loading && !error && (
-                        <ImoveisTable imoveis={imoveis} onEdit={handleEdit} onDelete={handleDelete} />
+                        <ImoveisTable
+                            imoveis={imoveis}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                            onDeactivate={handleDeactivate}
+                            onActivate={handleActivate}
+                            showDisabledImoveis={showDisabledImovel}
+                        />
                     )}
 
                     <Button
-                        onClick={onClose}
+                        onClick={() => {
+                            onClose();
+                            setShowDisabledImovel(false);
+                        }}
                         variant="contained" // Adicionei 'contained' para dar um fundo vermelho
                         color="error" // Propriedade que define a cor para vermelho do tema
                         sx={{ mt: 2 }}

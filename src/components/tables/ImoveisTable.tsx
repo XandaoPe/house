@@ -16,13 +16,18 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Imovel } from '../../interfaces/Imovel';
+import BlockIcon from '@mui/icons-material/Block';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; import { Imovel } from '../../interfaces/Imovel';
 import { scrollableTableContainer, tableCellSx, tableContainerSx, textFieldSx } from '../../styles/styles';
 
 interface ImoveisTableProps {
     imoveis: Imovel[];
     onEdit: (imovel: Imovel) => void;
     onDelete: (imovel: Imovel) => void;
+    onDeactivate: (imovel: Imovel) => void;
+    // 🔥 NOVAS PROPS: para ativar e para saber o modo de exibição
+    onActivate: (imovel: Imovel) => void;
+    showDisabledImoveis: boolean;
 }
 
 const highlightStyle = {
@@ -52,8 +57,9 @@ const highlightText = (text: string | number, highlight: string) => {
     );
 };
 
-export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, onEdit }) => {
+export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, onEdit, onDeactivate, onActivate, showDisabledImoveis }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [highlightedColumns, setHighlightedColumns] = useState<string[]>([]);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
@@ -64,6 +70,7 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
         sortedImoveis.sort((a, b) => (a.rua || '').localeCompare(b.rua || ''));
 
         if (!searchTerm) {
+            setHighlightedColumns([]);
             return sortedImoveis;
         }
 
@@ -90,13 +97,21 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
         };
     }, [sortedAndFilteredImoveis, searchTerm]);
 
-    if (imoveis.length === 0) {
+    if (imoveis.length === 0 && !showDisabledImoveis) {
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2, color: 'white' }}>
                 Nenhum imóvel encontrado.
             </Typography>
         );
     }
+
+        if (imoveis.length === 0 && showDisabledImoveis) { // Se estiver mostrando desabilitados e não houver nenhum
+            return (
+                <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+                    Nenhum imóvel (ativo ou inativo) encontrado.
+                </Typography>
+            );
+        }
 
     if (sortedAndFilteredImoveis.length === 0) {
         return (
@@ -170,6 +185,31 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                                         >
                                             Editar
                                         </Button>
+
+
+                                        {/* 🔥 Lógica condicional para o botão Ativar/Desativar */}
+                                        {imovel.isDisabled ? (
+                                            <Button
+                                                color="success" // Cor verde para ativar
+                                                onClick={() => onActivate(imovel)}
+                                                startIcon={<CheckCircleIcon />}
+                                                sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
+                                            >
+                                                Ativar
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                color="warning"
+                                                onClick={() => onDeactivate(imovel)}
+                                                startIcon={<BlockIcon />}
+                                                sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
+                                                disabled={imovel.isDisabled} // Desativa o botão se o usuário já estiver inativo (caso não esteja no modo "Listar Todos")
+                                            >
+                                                Desativar
+                                            </Button>
+                                        )}
+
+
                                         <Button
                                             color="error"
                                             onClick={() => onDelete(imovel)}

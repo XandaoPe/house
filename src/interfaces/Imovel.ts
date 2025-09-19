@@ -11,12 +11,6 @@ export interface Imovel {
     obs: string;
     copasa: string;
     cemig: string;
+    isDisabled?: boolean; // Deve estar presente
     id_user?: string;
 }
-// thumb: string;
-// tipo: string;
-// endereco: string;
-// cidade: string;
-// uf: string;
-// valor: string;
-// descricao: string;
