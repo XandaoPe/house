@@ -184,7 +184,13 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                     </TableHead>
                     <TableBody>
                         {sortedAndFilteredUsers.map((user) => (
-                            <TableRow key={user._id}>
+                            <TableRow
+                                key={user._id}
+                                sx={{
+                                    '&:last-child td, &:last-child th': { border: 0 },
+                                    backgroundColor: user.isDisabled ? '#453422' : 'inherit' // AQUI está a mudança! 
+                                }}
+                            >
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.name, searchTerm)}</TableCell>
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.email, searchTerm)}</TableCell>
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.phone, searchTerm)}</TableCell>

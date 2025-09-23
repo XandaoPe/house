@@ -17,7 +17,8 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BlockIcon from '@mui/icons-material/Block';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'; import { Imovel } from '../../interfaces/Imovel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Imovel } from '../../interfaces/Imovel';
 import { scrollableTableContainer, tableCellSx, tableContainerSx, textFieldSx } from '../../styles/styles';
 
 interface ImoveisTableProps {
@@ -105,13 +106,13 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
         );
     }
 
-        if (imoveis.length === 0 && showDisabledImoveis) { // Se estiver mostrando desabilitados e não houver nenhum
-            return (
-                <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-                    Nenhum imóvel (ativo ou inativo) encontrado.
-                </Typography>
-            );
-        }
+    if (imoveis.length === 0 && showDisabledImoveis) { // Se estiver mostrando desabilitados e não houver nenhum
+        return (
+            <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+                Nenhum imóvel (ativo ou inativo) encontrado.
+            </Typography>
+        );
+    }
 
     if (sortedAndFilteredImoveis.length === 0) {
         return (
@@ -164,7 +165,13 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                     </TableHead>
                     <TableBody>
                         {sortedAndFilteredImoveis.map((imovel) => (
-                            <TableRow key={imovel._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                            <TableRow
+                                key={imovel._id}
+                                sx={{
+                                    '&:last-child td, &:last-child th': { border: 0 },
+                                    backgroundColor: imovel.isDisabled ? '#453422' : 'inherit' // AQUI está a mudança! 
+                                }}
+                            >
                                 <TableCell sx={tableCellSx}>{highlightText(imovel.tipo, searchTerm)}</TableCell>
                                 <TableCell sx={tableCellSx}>{highlightText(imovel.rua, searchTerm)}</TableCell>
                                 <TableCell sx={tableCellSx}>{highlightText(imovel.numero, searchTerm)}</TableCell>
