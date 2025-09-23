@@ -1,4 +1,3 @@
-// src/components/UsersTable.tsx
 import * as React from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import {
@@ -14,22 +13,31 @@ import {
     Button,
     TextField,
     Box,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BlockIcon from '@mui/icons-material/Block';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Ícone para ativar
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DownloadIcon from '@mui/icons-material/Download';
 import { User } from '../../interfaces/users';
 import { scrollableTableContainer, tableCellSx, tableContainerSx, textFieldSx } from '../../styles/styles';
+import { importUsersFromExcel } from '../services/UsersService';
+import { toast } from 'react-toastify';
 
 interface usersTableProps {
     users: User[];
     onEdit: (user: User) => void;
     onDelete: (user: User) => void;
     onDeactivate: (user: User) => void;
-    // 🔥 NOVAS PROPS: para ativar e para saber o modo de exibição
     onActivate: (user: User) => void;
     showDisabledUsers: boolean;
+    onUsersReload: () => void;
 }
 
 const highlightStyle = {
@@ -58,9 +66,12 @@ const highlightText = (text: string, highlight: string) => {
     );
 };
 
-export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit, onDeactivate, onActivate, showDisabledUsers }) => {
+export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit, onDeactivate, onActivate, showDisabledUsers, onUsersReload }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [highlightedColumns, setHighlightedColumns] = useState<string[]>([]);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
@@ -116,7 +127,55 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
         };
     }, [sortedAndFilteredUsers, searchTerm]);
 
-    if (users.length === 0 && !showDisabledUsers) { // Apenas se não estiver mostrando desabilitados
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            setConfirmModalOpen(true);
+        }
+    };
+
+    const handleConfirmImport = async () => {
+        if (selectedFile) {
+            try {
+                toast.info('Importando usuários... Aguarde.');
+                const summary = await importUsersFromExcel(selectedFile);
+                toast.success(`Importação concluída: ${summary.created} criados e ${summary.updated} atualizados.`);
+                onUsersReload();
+            } catch (error: any) {
+                toast.error(error.message);
+            } finally {
+                setSelectedFile(null);
+                setConfirmModalOpen(false);
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
+            }
+        }
+    };
+
+    const handleCancelImport = () => {
+        setConfirmModalOpen(false);
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
+    const handleImportClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleDownloadTemplate = () => {
+        const link = document.createElement('a');
+        link.href = '/template-usuarios.xlsx';
+        link.setAttribute('download', 'template-usuarios.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    if (users.length === 0 && !showDisabledUsers) {
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                 Nenhum usuário ativo encontrado.
@@ -124,7 +183,7 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
         );
     }
 
-    if (users.length === 0 && showDisabledUsers) { // Se estiver mostrando desabilitados e não houver nenhum
+    if (users.length === 0 && showDisabledUsers) {
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                 Nenhum usuário (ativo ou inativo) encontrado.
@@ -135,15 +194,38 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
     if (sortedAndFilteredUsers.length === 0) {
         return (
             <>
-                <Box sx={{ ...textFieldSx, mb: 2 }}>
+                <Box sx={{
+                    display: 'flex',
+                    gap: 1,
+                    mb: 2,
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    ...textFieldSx,
+                }}>
                     <TextField
-                        fullWidth
+                        sx={{ flexGrow: 1 }}
                         label="Pesquisar usuários"
                         variant="outlined"
                         value={searchTerm}
                         onChange={handleSearchChange}
                         size="small"
                     />
+                    <Button
+                        variant="outlined"
+                        startIcon={<DownloadIcon />}
+                        onClick={handleDownloadTemplate}
+                        sx={{ whiteSpace: 'nowrap' }}
+                    >
+                        Template
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<CloudUploadIcon />}
+                        onClick={handleImportClick}
+                        sx={{ whiteSpace: 'nowrap' }}
+                    >
+                        Importar
+                    </Button>
                 </Box>
                 <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                     Nenhum usuário encontrado com o termo "{searchTerm}".
@@ -154,16 +236,52 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
 
     return (
         <Box>
-            <Box sx={{ ...textFieldSx, mb: 2 }}>
+            <Box sx={{
+                display: 'flex',
+                gap: 1,
+                mb: 2,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                ...textFieldSx,
+            }}>
                 <TextField
-                    fullWidth
+                    sx={{ flexGrow: 1 }}
                     label="Pesquisar usuários"
                     variant="outlined"
                     value={searchTerm}
                     onChange={handleSearchChange}
                     size="small"
                 />
+                <Button
+                    variant="outlined"
+                    startIcon={<DownloadIcon />}
+                    onClick={handleDownloadTemplate}
+                    sx={{ whiteSpace: 'nowrap' }}
+                >
+                    Template
+                </Button>
+                <Button
+                    variant="contained"
+                    startIcon={<CloudUploadIcon />}
+                    onClick={handleImportClick}
+                    sx={{ whiteSpace: 'nowrap' }}
+                >
+                    Importar
+                </Button>
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept=".xlsx, .xls"
+                    style={{ display: 'none' }}
+                />
+                {selectedFile && (
+                    <Typography variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
+                        Arquivo selecionado: **{selectedFile.name}**
+                    </Typography>
+                )}
             </Box>
+
             <TableContainer component={Paper} sx={{ ...tableContainerSx, ...scrollableTableContainer }}>
                 <Table stickyHeader aria-label="tabela de Usuários" size="small">
                     <TableHead>
@@ -188,7 +306,7 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                                 key={user._id}
                                 sx={{
                                     '&:last-child td, &:last-child th': { border: 0 },
-                                    backgroundColor: user.isDisabled ? '#453422' : 'inherit' // AQUI está a mudança! 
+                                    backgroundColor: user.isDisabled ? '#453422' : 'inherit'
                                 }}
                             >
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.name, searchTerm)}</TableCell>
@@ -206,11 +324,9 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                                         >
                                             Editar
                                         </Button>
-
-                                        {/* 🔥 Lógica condicional para o botão Ativar/Desativar */}
                                         {user.isDisabled ? (
                                             <Button
-                                                color="success" // Cor verde para ativar
+                                                color="success"
                                                 onClick={() => onActivate(user)}
                                                 startIcon={<CheckCircleIcon />}
                                                 sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
@@ -223,12 +339,11 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                                                 onClick={() => onDeactivate(user)}
                                                 startIcon={<BlockIcon />}
                                                 sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
-                                                disabled={user.isDisabled} // Desativa o botão se o usuário já estiver inativo (caso não esteja no modo "Listar Todos")
+                                                disabled={user.isDisabled}
                                             >
                                                 Desativar
                                             </Button>
                                         )}
-
                                         <Button
                                             color="error"
                                             onClick={() => onDelete(user)}
@@ -244,6 +359,31 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Dialog
+                open={confirmModalOpen}
+                onClose={handleCancelImport}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Confirmar Importação"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Você está prestes a importar o arquivo: **{selectedFile?.name}**.
+                        Deseja continuar com a importação? Esta ação pode criar novos usuários ou atualizar os existentes.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCancelImport} color="error">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleConfirmImport} color="primary" autoFocus>
+                        Confirmar Importação
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

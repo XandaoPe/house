@@ -94,12 +94,12 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
 
     const handleDelete = async (user: User) => {
         setMessage(null);
-        if (window.confirm(`Tem certeza que deseja excluir o colaborador "${user.name}"?`)) {
+        if (window.confirm(`Tem certeza que deseja excluir o usuário "${user.name}"?`)) {
             setLoading(true);
             try {
                 await deleteUsers(user._id);
                 await loadData();
-                setMessage('Imóvel excluído com sucesso!');
+                setMessage('Usuário excluído com sucesso!');
             } catch (err) {
                 setError('Falha ao excluir o imóvel.');
             } finally {
@@ -213,6 +213,7 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
                             onDeactivate={handleDeactivate}
                             onActivate={handleActivate}
                             showDisabledUsers={showDisabledUsers}
+                            onUsersReload={loadData}
                         />
                     )}
 

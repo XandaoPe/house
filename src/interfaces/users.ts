@@ -11,3 +11,12 @@ export interface User {
     password?: string;
     isDisabled?: boolean; // Deve estar presente
 }
+
+// 🔥 NOVA INTERFACE: Para a resposta do endpoint de importação
+export interface ImportSummary {
+    message: string;
+    created: number;
+    updated: number;
+    ignored: number;
+    details: { email: string; status: string; reason?: string }[];
+}
