@@ -185,7 +185,7 @@ export const ImoveisModal: React.FC<ImoveisModalProps> = ({ open, onClose }) => 
                                 fontSize: '0.75rem' // Ajusta o tamanho da fonte para o botão pequeno
                             }}
                         >
-                            {showDisabledImovel ? 'Listar Ativos' : 'Listar Todos'}
+                            {showDisabledImovel ? 'Listar Ativos' : 'Listar Ativos e Inativos'}
                         </Button>
                         <Button
                             disabled={!canEdit}

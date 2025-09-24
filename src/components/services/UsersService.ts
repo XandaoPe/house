@@ -1,4 +1,4 @@
-import { api } from '../../services/api'; // Importar a API configurada
+import { api } from '../../services/api';
 import { User } from '../../interfaces/users';
 
 const API_URL = '/users';
@@ -10,8 +10,6 @@ export const fetchUsers = async (): Promise<User[]> => {
         return response.data;
     } catch (error: any) {
         console.error('Erro ao buscar usuários:', error);
-
-        // Tratamento específico de erros
         if (error.response?.status === 401) {
             throw new Error('Sessão expirada. Faça login novamente.');
         } else if (error.response?.status === 403) {
@@ -28,7 +26,6 @@ export const createUsers = async (users: Omit<User, '_id'>): Promise<User> => {
         return response.data;
     } catch (error: any) {
         console.error('Erro ao criar usuário:', error);
-
         if (error.response?.status === 401) {
             throw new Error('Sessão expirada. Faça login novamente.');
         } else if (error.response?.status === 403) {
@@ -45,7 +42,6 @@ export const updateUsers = async (users: User): Promise<User> => {
         return response.data;
     } catch (error: any) {
         console.error('Erro ao alterar usuário:', error);
-
         if (error.response?.status === 401) {
             throw new Error('Sessão expirada. Faça login novamente.');
         } else if (error.response?.status === 403) {
@@ -61,7 +57,6 @@ export const deleteUsers = async (id: string): Promise<void> => {
         await api.delete(`${API_URL}/${id}`);
     } catch (error: any) {
         console.error('Erro ao deletar usuário:', error);
-
         if (error.response?.status === 401) {
             throw new Error('Sessão expirada. Faça login novamente.');
         } else if (error.response?.status === 403) {
@@ -72,14 +67,12 @@ export const deleteUsers = async (id: string): Promise<void> => {
     }
 };
 
-// Função adicional para buscar usuário por ID
 export const fetchUserById = async (id: string): Promise<User> => {
     try {
         const response = await api.get<User>(`${API_URL}/${id}`);
         return response.data;
     } catch (error: any) {
         console.error('Erro ao buscar usuário:', error);
-
         if (error.response?.status === 401) {
             throw new Error('Sessão expirada. Faça login novamente.');
         } else if (error.response?.status === 403) {
@@ -96,7 +89,6 @@ export const deactivateUser = async (id: string): Promise<User> => {
         return response.data;
     } catch (error: any) {
         console.error('Erro ao desativar usuário:', error);
-
         if (error.response?.status === 401) {
             throw new Error('Sessão expirada. Faça login novamente.');
         } else if (error.response?.status === 403) {
@@ -143,7 +135,6 @@ export const importUsersFromExcel = async (file: File): Promise<any> => {
     try {
         const formData = new FormData();
         formData.append('file', file);
-
         const response = await api.post(`${API_URL}/import`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -153,5 +144,24 @@ export const importUsersFromExcel = async (file: File): Promise<any> => {
     } catch (error: any) {
         console.error('Erro ao importar usuários:', error);
         throw new Error(error.response?.data?.message || 'Falha ao importar usuários da planilha.');
+    }
+};
+
+export const exportUsersToExcel = async (): Promise<void> => {
+    try {
+        const response = await api.get(`${API_URL}/export`, {
+            responseType: 'blob',
+        });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'usuarios.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+        console.error('Erro ao exportar usuários:', error);
+        throw new Error(error.response?.data?.message || 'Falha ao exportar usuários para a planilha.');
     }
 };

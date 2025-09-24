@@ -18,6 +18,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,9 +26,10 @@ import BlockIcon from '@mui/icons-material/Block';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DownloadIcon from '@mui/icons-material/Download';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import { User } from '../../interfaces/users';
 import { scrollableTableContainer, tableCellSx, tableContainerSx, textFieldSx } from '../../styles/styles';
-import { importUsersFromExcel } from '../services/UsersService';
+import { importUsersFromExcel, exportUsersToExcel } from '../services/UsersService';
 import { toast } from 'react-toastify';
 
 interface usersTableProps {
@@ -72,6 +74,8 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [confirmDownloadOpen, setConfirmDownloadOpen] = useState(false);
+    const [confirmExportOpen, setConfirmExportOpen] = useState(false);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
@@ -167,12 +171,32 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
     };
 
     const handleDownloadTemplate = () => {
+        setConfirmDownloadOpen(true);
+    };
+
+    const handleConfirmDownload = () => {
         const link = document.createElement('a');
         link.href = '/template-usuarios.xlsx';
         link.setAttribute('download', 'template-usuarios.xlsx');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        setConfirmDownloadOpen(false);
+    };
+
+    const handleExport = () => {
+        setConfirmExportOpen(true);
+    };
+
+    const handleExportUsers = async () => {
+        try {
+            toast.info('Exportando usuários... Aguarde.');
+            await exportUsersToExcel();
+            toast.success('Exportação concluída com sucesso!');
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+        setConfirmExportOpen(false);
     };
 
     if (users.length === 0 && !showDisabledUsers) {
@@ -226,6 +250,14 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                     >
                         Importar
                     </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<SystemUpdateAltIcon />}
+                        onClick={handleExport}
+                        sx={{ whiteSpace: 'nowrap' }}
+                    >
+                        Exportar
+                    </Button>
                 </Box>
                 <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                     Nenhum usuário encontrado com o termo "{searchTerm}".
@@ -252,22 +284,47 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                     onChange={handleSearchChange}
                     size="small"
                 />
-                <Button
-                    variant="outlined"
-                    startIcon={<DownloadIcon />}
-                    onClick={handleDownloadTemplate}
-                    sx={{ whiteSpace: 'nowrap' }}
+                <Tooltip
+                    title="Fazer DownLoad do TEMPLATE com o cabeçalho correto, para inclusão/alteração dos dados de usuários."
+                    placement="top" // Onde a dica de texto deve aparecer (pode ser 'right', 'bottom', etc.)
                 >
-                    Template
-                </Button>
-                <Button
-                    variant="contained"
-                    startIcon={<CloudUploadIcon />}
-                    onClick={handleImportClick}
-                    sx={{ whiteSpace: 'nowrap' }}
+                    <Button
+                        variant="outlined"
+                        startIcon={<DownloadIcon />}
+                        onClick={handleDownloadTemplate}
+                        sx={{ whiteSpace: 'nowrap' }}
+                    >
+                        Template
+                    </Button>
+                </Tooltip>
+                {/* 👈 Adicionando Tooltip para o botão Importar */}
+                <Tooltip
+                    title="Fazer UpLoad de uma planilha Excel com os dados dos usuários, seja atualização ou inclusão(usuário existente é verificado se há alteração de dados/usuário inexistente é automaticamente incluído)."
+                    placement="top" // Onde a dica de texto deve aparecer (pode ser 'right', 'bottom', etc.)
                 >
-                    Importar
-                </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<CloudUploadIcon />}
+                        onClick={handleImportClick}
+                        sx={{ whiteSpace: 'nowrap' }}
+                    >
+                        Importar
+                    </Button>
+                </Tooltip>
+                {/* 👈 Adicionando Tooltip para o botão Exportar */}
+                <Tooltip
+                    title="Fazer o DownLoad dos usuários cadastrados(todos, incluindo os inativos)."
+                    placement="top"
+                >
+                    <Button
+                        variant="contained"
+                        startIcon={<SystemUpdateAltIcon />}
+                        onClick={handleExport}
+                        sx={{ whiteSpace: 'nowrap' }}
+                    >
+                        Exportar
+                    </Button>
+                </Tooltip>
                 <input
                     type="file"
                     ref={fileInputRef}
@@ -381,6 +438,52 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                     </Button>
                     <Button onClick={handleConfirmImport} color="primary" autoFocus>
                         Confirmar Importação
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={confirmDownloadOpen}
+                onClose={() => setConfirmDownloadOpen(false)}
+                aria-labelledby="download-dialog-title"
+                aria-describedby="download-dialog-description"
+            >
+                <DialogTitle id="download-dialog-title">
+                    {"Confirmar Download do Template"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="download-dialog-description">
+                        Deseja baixar o arquivo de template? Ele contém o cabeçalho correto para a inclusão ou alteração de usuários.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmDownloadOpen(false)} color="error">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleConfirmDownload} color="primary" autoFocus>
+                        Confirmar Download
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={confirmExportOpen}
+                onClose={() => setConfirmExportOpen(false)}
+                aria-labelledby="download-dialog-title"
+                aria-describedby="download-dialog-description"
+            >
+                <DialogTitle id="download-dialog-title">
+                    {"Confirmar Download dos usuários em excel "}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="download-dialog-description">
+                        Deseja fazer o download dos usuários cadastrados (todos, incluindo os inativos)?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmExportOpen(false)} color="error">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleExportUsers} color="primary" autoFocus>
+                        Confirmar Download
                     </Button>
                 </DialogActions>
             </Dialog>

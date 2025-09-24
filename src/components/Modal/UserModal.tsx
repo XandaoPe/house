@@ -182,7 +182,7 @@ export const UsersModal: React.FC<usersModalProps> = ({ open, onClose }) => {
                                 fontSize: '0.75rem' // Ajusta o tamanho da fonte para o botão pequeno
                             }}
                         >
-                            {showDisabledUsers ? 'Listar Ativos' : 'Listar Todos'}
+                            {showDisabledUsers ? 'Listar Ativos' : 'Listar Ativos e Inativos'}
                         </Button>
                         <Button
                             disabled={!canEdit}
