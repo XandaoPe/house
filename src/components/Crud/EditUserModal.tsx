@@ -47,7 +47,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClos
 
     React.useEffect(() => {
         if (user) {
-            setFormData({ ...user, roles: user.roles || ['USER'] }); // Inicializa com os papéis do usuário, com um padrão se não houver
+            setFormData({ ...user, roles: user.roles || ['USER'] });
             setError(null);
         }
     }, [user]);
@@ -151,7 +151,15 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ open, user, onClos
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                     {selected.map((value) => (
-                                        <Chip key={value} label={value} />
+                                        <Chip
+                                            key={value}
+                                            label={value}
+                                            // 🚨 Adicione estilos explícitos para garantir a visibilidade
+                                            sx={{
+                                                backgroundColor: 'primary.main', // Exemplo: cor de fundo azul
+                                                color: 'white',                  // Cor do texto branca
+                                            }}
+                                        />
                                     ))}
                                 </Box>
                             )}

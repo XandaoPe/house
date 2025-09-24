@@ -160,7 +160,15 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                     {selected.map((value) => (
-                                        <Chip key={value} label={value} />
+                                        <Chip
+                                            key={value}
+                                            label={value}
+                                            // 🚨 Adicione estilos explícitos para garantir a visibilidade
+                                            sx={{
+                                                backgroundColor: 'primary.main', // Exemplo: cor de fundo azul
+                                                color: 'white',                  // Cor do texto branca
+                                            }}
+                                        />
                                     ))}
                                 </Box>
                             )}
