@@ -354,7 +354,19 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Fone</TableCell>
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>CPF</TableCell>
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Cargo</TableCell>
-                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Ações</TableCell>
+                            <TableCell
+                                align="right"
+                                sx={{
+                                    ...tableCellSx,
+                                    py: 0.2,
+                                    backgroundColor: '#1e1e1e',
+                                    position: 'sticky',
+                                    right: 0,
+                                    zIndex: 10
+                                }}
+                            >
+                                Ações
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -371,7 +383,15 @@ export const UsersTable: React.FC<usersTableProps> = ({ users, onDelete, onEdit,
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.phone, searchTerm)}</TableCell>
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.cpf, searchTerm)}</TableCell>
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(user.cargo, searchTerm)}</TableCell>
-                                <TableCell align="right" sx={{ ...tableCellSx, py: 0.2 }}>
+                                <TableCell
+                                    align="right"
+                                    sx={{
+                                        ...tableCellSx,
+                                        position: 'sticky',
+                                        right: 0,
+                                        zIndex: 1,
+                                    }}
+                                >
                                     <ButtonGroup variant="contained" aria-label="Ações de Usuário">
                                         <Button
                                             color="primary"

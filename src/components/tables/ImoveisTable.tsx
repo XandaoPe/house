@@ -26,7 +26,6 @@ interface ImoveisTableProps {
     onEdit: (imovel: Imovel) => void;
     onDelete: (imovel: Imovel) => void;
     onDeactivate: (imovel: Imovel) => void;
-    // 🔥 NOVAS PROPS: para ativar e para saber o modo de exibição
     onActivate: (imovel: Imovel) => void;
     showDisabledImoveis: boolean;
 }
@@ -106,7 +105,7 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
         );
     }
 
-    if (imoveis.length === 0 && showDisabledImoveis) { // Se estiver mostrando desabilitados e não houver nenhum
+    if (imoveis.length === 0 && showDisabledImoveis) {
         return (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                 Nenhum imóvel (ativo ou inativo) encontrado.
@@ -160,7 +159,20 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Observação</TableCell>
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Copasa</TableCell>
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Cemig</TableCell>
-                            <TableCell align="right" sx={{ ...tableCellSx, py: 0.2, backgroundColor: '#1e1e1e' }}>Ações</TableCell>
+                            {/* 🔥 AQUI ESTÁ A MUDANÇA: Adicionando estilos para fixar a coluna de ações */}
+                            <TableCell
+                                align="right"
+                                sx={{
+                                    ...tableCellSx,
+                                    py: 0.2,
+                                    backgroundColor: '#1e1e1e',
+                                    position: 'sticky',
+                                    right: 0,
+                                    zIndex: 10
+                                }}
+                            >
+                                Ações
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -169,7 +181,7 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                                 key={imovel._id}
                                 sx={{
                                     '&:last-child td, &:last-child th': { border: 0 },
-                                    backgroundColor: imovel.isDisabled ? '#453422' : 'inherit' // AQUI está a mudança! 
+                                    backgroundColor: imovel.isDisabled ? '#453422' : 'inherit'
                                 }}
                             >
                                 <TableCell sx={tableCellSx}>{highlightText(imovel.tipo, searchTerm)}</TableCell>
@@ -182,7 +194,17 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                                 <TableCell sx={tableCellSx}>{highlightText(imovel.obs, searchTerm)}</TableCell>
                                 <TableCell sx={tableCellSx}>{highlightText(imovel.copasa, searchTerm)}</TableCell>
                                 <TableCell sx={tableCellSx}>{highlightText(imovel.cemig, searchTerm)}</TableCell>
-                                <TableCell align="right" sx={tableCellSx}>
+                                {/* 🔥 AQUI ESTÁ A MUDANÇA: Aplicando os mesmos estilos na célula do corpo */}
+                                <TableCell
+                                    align="right"
+                                    sx={{
+                                        ...tableCellSx,
+                                        position: 'sticky',
+                                        right: 0,
+                                        zIndex: 1,
+                                        backgroundColor: imovel.isDisabled ? '#453422' : '#222222',
+                                    }}
+                                >
                                     <ButtonGroup variant="contained" aria-label="Ações de Imóvel">
                                         <Button
                                             color="primary"
@@ -192,12 +214,9 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                                         >
                                             Editar
                                         </Button>
-
-
-                                        {/* 🔥 Lógica condicional para o botão Ativar/Desativar */}
                                         {imovel.isDisabled ? (
                                             <Button
-                                                color="success" // Cor verde para ativar
+                                                color="success"
                                                 onClick={() => onActivate(imovel)}
                                                 startIcon={<CheckCircleIcon />}
                                                 sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
@@ -210,13 +229,11 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                                                 onClick={() => onDeactivate(imovel)}
                                                 startIcon={<BlockIcon />}
                                                 sx={{ py: 0.2, px: 1, fontSize: '0.75rem' }}
-                                                disabled={imovel.isDisabled} // Desativa o botão se o usuário já estiver inativo (caso não esteja no modo "Listar Todos")
+                                                disabled={imovel.isDisabled}
                                             >
                                                 Desativar
                                             </Button>
                                         )}
-
-
                                         <Button
                                             color="error"
                                             onClick={() => onDelete(imovel)}
