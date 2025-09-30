@@ -1,21 +1,29 @@
-import axios from 'axios';
+// src/services/imovesService.ts
+
+import axios, { AxiosResponse } from 'axios'; // Importe Axios e AxiosResponse para tipagem, embora o 'api' já seja uma instância dele
 import { Imovel } from '../../interfaces/Imovel';
-import { api } from '../../services/api'; // Sua instância customizada do Axios
+import { api } from '../../services/api'; // Sua instância customizada do Axios, que já deve ter a base URL configurada.
 
-const API_URL = 'http://localhost:5000/imobs'; // ou 'https://imob-back-yc5k.onrender.com/imobs'
+// Se 'api' já tem a base URL configurada, a constante API_URL não precisa da URL completa,
+// mas vou mantê-la como referência e usar o caminho relativo nos gets/posts para maior robustez,
+// assumindo que a base URL está em api.
+const API_BASE_PATH = '/imobs'; // Caminho base da rota de imóveis no seu backend
 
-// Interface para o resumo da importação
-interface ImportSummary {
+// Interface para o resumo da importação.
+// Mantenho o 'disabled' para compatibilidade com o summary retornado pelo seu backend.
+export interface ImportSummary {
     created: number;
     updated: number;
     disabled: number; // Para imóveis desativados na importação
+    // Você pode adicionar 'ignored' ou 'errors' aqui se o backend retornar
 }
 
-// Funções de CRUD existentes (com pequenas otimizações e padronização)
+// --- Funções de CRUD ---
 
 export const fetchImoveis = async (): Promise<Imovel[]> => {
     try {
-        const response = await api.get<Imovel[]>(API_URL); // Usando 'api' para consistência
+        // Assume que este endpoint retorna apenas ativos ou todos, dependendo da configuração do backend.
+        const response: AxiosResponse<Imovel[]> = await api.get(API_BASE_PATH);
         return response.data;
     } catch (error: any) {
         console.error('Erro ao buscar imóveis:', error);
@@ -31,7 +39,7 @@ export const fetchImoveis = async (): Promise<Imovel[]> => {
 
 export const createImovel = async (imovel: Omit<Imovel, '_id' | 'createdAt' | 'updatedAt' | 'isDisabled'>): Promise<Imovel> => {
     try {
-        const response = await api.post<Imovel>(API_URL, imovel); // Usando 'api' para consistência
+        const response: AxiosResponse<Imovel> = await api.post(API_BASE_PATH, imovel);
         return response.data;
     } catch (error: any) {
         console.error('Erro ao criar imóvel:', error);
@@ -47,7 +55,7 @@ export const createImovel = async (imovel: Omit<Imovel, '_id' | 'createdAt' | 'u
 
 export const updateImovel = async (imovel: Imovel): Promise<Imovel> => {
     try {
-        const response = await api.put<Imovel>(`${API_URL}/${imovel._id}`, imovel); // Usando 'api' para consistência
+        const response: AxiosResponse<Imovel> = await api.put(`${API_BASE_PATH}/${imovel._id}`, imovel);
         return response.data;
     } catch (error: any) {
         console.error('Erro ao alterar imóvel:', error);
@@ -63,7 +71,7 @@ export const updateImovel = async (imovel: Imovel): Promise<Imovel> => {
 
 export const deleteImovel = async (id: string): Promise<void> => {
     try {
-        await api.delete(`${API_URL}/${id}`); // Usando 'api' para consistência
+        await api.delete(`${API_BASE_PATH}/${id}`);
     } catch (error: any) {
         console.error('Erro ao deletar imóvel:', error);
         if (error.response?.status === 401) {
@@ -78,7 +86,7 @@ export const deleteImovel = async (id: string): Promise<void> => {
 
 export const fetchImobById = async (id: string): Promise<Imovel> => {
     try {
-        const response = await api.get<Imovel>(`${API_URL}/${id}`);
+        const response: AxiosResponse<Imovel> = await api.get(`${API_BASE_PATH}/${id}`);
         return response.data;
     } catch (error: any) {
         console.error('Erro ao buscar imóvel:', error);
@@ -94,7 +102,7 @@ export const fetchImobById = async (id: string): Promise<Imovel> => {
 
 export const deactivateImovel = async (id: string): Promise<Imovel> => {
     try {
-        const response = await api.patch<Imovel>(`${API_URL}/${id}/deactivate`);
+        const response: AxiosResponse<Imovel> = await api.patch(`${API_BASE_PATH}/${id}/deactivate`);
         return response.data;
     } catch (error: any) {
         console.error('Erro ao desativar imóvel:', error);
@@ -110,7 +118,7 @@ export const deactivateImovel = async (id: string): Promise<Imovel> => {
 
 export const activateImovel = async (id: string): Promise<Imovel> => {
     try {
-        const response = await api.patch<Imovel>(`${API_URL}/${id}/activate`);
+        const response: AxiosResponse<Imovel> = await api.patch(`${API_BASE_PATH}/${id}/activate`);
         return response.data;
     } catch (error: any) {
         console.error('Erro ao ativar Imóvel:', error);
@@ -124,9 +132,11 @@ export const activateImovel = async (id: string): Promise<Imovel> => {
     }
 };
 
+// Esta função é importante para a tabela, pois retorna ativos e inativos,
+// crucial para o cálculo dos contadores e exportação.
 export const fetchAllImoveis = async (): Promise<Imovel[]> => {
     try {
-        const response = await api.get<Imovel[]>(`${API_URL}/all`);
+        const response: AxiosResponse<Imovel[]> = await api.get(`${API_BASE_PATH}/all`);
         return response.data;
     } catch (error: any) {
         console.error('Erro ao buscar todos os imóveis:', error);
@@ -140,14 +150,15 @@ export const fetchAllImoveis = async (): Promise<Imovel[]> => {
     }
 };
 
-// Novas funções para importação e exportação de Excel
+// --- Funções de Importação e Exportação de Excel (Já estavam corretas) ---
 
 export const importImobsFromExcel = async (file: File): Promise<ImportSummary> => {
     try {
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await api.post<ImportSummary>(`${API_URL}/import`, formData, { // Endpoint: /imobs/import
+        // Endpoint: /imobs/import
+        const response: AxiosResponse<ImportSummary> = await api.post(`${API_BASE_PATH}/import`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -168,7 +179,8 @@ export const importImobsFromExcel = async (file: File): Promise<ImportSummary> =
 
 export const exportImobsToExcel = async (): Promise<void> => {
     try {
-        const response = await api.get(`${API_URL}/export`, { // Endpoint: /imobs/export
+        // Endpoint: /imobs/export
+        const response: AxiosResponse<Blob> = await api.get(`${API_BASE_PATH}/export`, {
             responseType: 'blob', // Importante para lidar com o download de arquivos binários
         });
 

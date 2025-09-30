@@ -31,7 +31,7 @@ import { Imovel } from '../../interfaces/Imovel';
 import { scrollableTableContainer, tableCellSx, tableContainerSx, textFieldSx } from '../../styles/styles';
 import { toast } from 'react-toastify';
 // Importação dos serviços de imóveis (serão criados ou adaptados abaixo)
-import { importImobsFromExcel, exportImobsToExcel } from '../services/imovesService'; // Assumindo que este caminho existe ou será criado
+import { importImobsFromExcel, exportImobsToExcel } from '../services/imovesService';
 
 interface ImoveisTableProps {
     imoveis: Imovel[];
@@ -40,7 +40,7 @@ interface ImoveisTableProps {
     onDeactivate: (imovel: Imovel) => void;
     onActivate: (imovel: Imovel) => void;
     showDisabledImoveis: boolean;
-    onImobsReload: () => void; // Adicionado para recarregar imóveis após importação
+    onImobsReload: () => void;
 }
 
 const highlightStyle = {
@@ -50,7 +50,7 @@ const highlightStyle = {
 };
 
 const highlightText = (text: string | number | undefined | null, highlight: string) => {
-    const textString = String(text || ''); // Garante que text é uma string vazia se for null/undefined
+    const textString = String(text || '');
     if (!highlight) {
         return textString;
     }
@@ -81,6 +81,14 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
+
+    // 🔥 NOVO: Cálculo dos contadores
+    const { totalImoveis, ativos, inativos } = useMemo(() => {
+        const total = imoveis.length;
+        const ativos = imoveis.filter(imovel => !imovel.isDisabled).length;
+        const inativos = total - ativos;
+        return { totalImoveis: total, ativos, inativos };
+    }, [imoveis]);
 
     const sortedAndFilteredImoveis = useMemo(() => {
         let sortedImoveis = [...imoveis];
@@ -126,7 +134,11 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
             try {
                 toast.info('Importando imóveis... Aguarde.');
                 const summary = await importImobsFromExcel(selectedFile);
+
+                // Antes estava: const deactivatedCount = summary.deactivated || summary.disabled;
+                // Corrigido para usar apenas a propriedade definida na interface:
                 toast.success(`Importação concluída: ${summary.created} criados, ${summary.updated} atualizados e ${summary.disabled} desativados.`);
+
                 onImobsReload();
             } catch (error: any) {
                 toast.error(error.message || 'Erro ao importar imóveis.');
@@ -158,7 +170,7 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
 
     const handleConfirmDownload = () => {
         const link = document.createElement('a');
-        link.href = '/template-imoveis.xlsx'; // Certifique-se de que este arquivo existe no diretório public
+        link.href = '/template-imoveis.xlsx';
         link.setAttribute('download', 'template-imoveis.xlsx');
         document.body.appendChild(link);
         link.click();
@@ -339,7 +351,7 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Observação</TableCell>
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Copasa</TableCell>
                             <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Cemig</TableCell>
-                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Status</TableCell> {/* Novo: Coluna de status */}
+                            <TableCell sx={{ ...tableCellSx, py: 0.2, backgroundColor: 'gray', color: 'black' }}>Status</TableCell>
                             <TableCell
                                 align="right"
                                 sx={{
@@ -374,7 +386,6 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(imovel.obs, searchTerm)}</TableCell>
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(imovel.copasa, searchTerm)}</TableCell>
                                 <TableCell sx={{ ...tableCellSx, py: 0.2 }}>{highlightText(imovel.cemig, searchTerm)}</TableCell>
-                                {/* Novo: Célula de status */}
                                 <TableCell
                                     sx={{
                                         ...tableCellSx,
@@ -438,6 +449,20 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                 </Table>
             </TableContainer>
 
+            {/* 🔥 NOVO: Exibição dos Contadores no Canto Inferior Direito */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, pr: 1, flexWrap: 'wrap', gap: 2 }}>
+                <Typography variant="subtitle1" component="span" sx={{ color: 'white', fontWeight: 'bold' }}>
+                    Total de Imóveis: <Box component="span" sx={{ color: 'primary.light' }}>{totalImoveis}</Box>
+                </Typography>
+                <Typography variant="subtitle1" component="span" sx={{ color: 'white', fontWeight: 'bold' }}>
+                    Ativos: <Box component="span" sx={{ color: 'success.light' }}>{ativos}</Box>
+                </Typography>
+                <Typography variant="subtitle1" component="span" sx={{ color: 'white', fontWeight: 'bold' }}>
+                    Inativos: <Box component="span" sx={{ color: 'warning.light' }}>{inativos}</Box>
+                </Typography>
+            </Box>
+
+
             {/* Modal de Confirmação de Importação */}
             <Dialog
                 open={confirmModalOpen}
@@ -451,7 +476,7 @@ export const ImoveisTable: React.FC<ImoveisTableProps> = ({ imoveis, onDelete, o
                 <DialogContent>
                     <DialogContentText id="imob-import-dialog-description">
                         Você está prestes a importar o arquivo: **{selectedFile?.name}**.
-                        Deseja continuar com a importação? Esta ação pode criar novos imóveis, atualizar os existentes ou desativar imóveis conforme o arquivo.
+                        Deseja continuar com a importação? Esta ação pode criar novos imóveis, atualizar os existentes ou **desativar imóveis que não estão no arquivo**.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
